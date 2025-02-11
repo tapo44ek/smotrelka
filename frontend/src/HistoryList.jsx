@@ -1,39 +1,42 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import HistoryItem from "./HistoryItem";
 
-const HistoryList = () => {
+const HistoryList = ({ setMovieData }) => {
   const [history, setHistory] = useState([]);
+  const [maxHeight, setMaxHeight] = useState("500px"); // Начальное значение
 
-  // 📌 Запрос истории с сервера
+  const historyRef = useRef(null);
+
   useEffect(() => {
     fetchHistory();
+    updateMaxHeight(); // Вычисляем высоту при монтировании
+
+    window.addEventListener("resize", updateMaxHeight);
+    return () => window.removeEventListener("resize", updateMaxHeight);
   }, []);
 
   const fetchHistory = async () => {
     try {
       const response = await fetch("http://localhost:8000/auth/history/hist", {
         credentials: "include",
-        method: "GET", // ✅ Передаём куки
+        method: "GET",
       });
       const data = await response.json();
-      setHistory(data); // Обновляем состояние
+      setHistory(data);
     } catch (error) {
       console.error("Ошибка загрузки истории:", error);
     }
   };
 
-// 📌 Удаление фильма
-const deleteMovie = async (id) => {
+  const deleteMovie = async (id) => {
     try {
       const response = await fetch("http://localhost:8000/auth/history/remove", {
-        method: "POST",  // ✅ Изменили на POST
+        method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",  // ✅ Указываем JSON
-        },
-        body: JSON.stringify({ id: id }),  // ✅ Отправляем JSON с id
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
       });
-  
+
       if (response.ok) {
         setHistory((prevHistory) => prevHistory.filter((movie) => movie.id !== id));
       } else {
@@ -44,15 +47,34 @@ const deleteMovie = async (id) => {
     }
   };
 
+  // Функция для вычисления динамической высоты истории
+  const updateMaxHeight = () => {
+    const headerHeight = document.querySelector("header")?.offsetHeight || 0;
+    const footerHeight = document.querySelector("footer")?.offsetHeight || 0;
+    const windowHeight = window.innerHeight;
+    const calculatedHeight = windowHeight - headerHeight - footerHeight - 32; // Отступы
+    setMaxHeight(`${calculatedHeight}px`);
+  };
+
   return (
-    <div className="p-4 bg-gray-900 text-white w-full">
-      <h2 className="text-xl font-semibold mb-4">📜 История просмотров</h2>
+    <div
+      ref={historyRef}
+      className="overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800 p-2 bg-gray-900 text-white rounded"
+      style={{ maxHeight }} // Устанавливаем динамическую высоту
+    >
+      <h2 className="text-lg font-semibold mb-2">📜 История просмотров</h2>
       {history.length === 0 ? (
         <p className="text-gray-400">История пуста</p>
       ) : (
-        <div className="space-y-2 max-w-full">
+        <div className="space-y-2">
           {history.map((movie) => (
-            <HistoryItem key={movie.id} movie={movie} onRemove={deleteMovie} />
+            <HistoryItem
+              key={movie.id}
+              movie={movie}
+              setMovieData={setMovieData}
+              onRemove={deleteMovie}
+              fetchHistory={fetchHistory}
+            />
           ))}
         </div>
       )}

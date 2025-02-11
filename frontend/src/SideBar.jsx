@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import HistoryList from "./HistoryList";
 
-const SideBar = ({ historyOpen, toggleHistory }) => {
+const SideBar = ({ historyOpen, toggleHistory, setMovieData }) => {
   const sidebarRef = useRef(null);
 
   // 📌 Закрываем SideBar при клике вне него
@@ -47,7 +47,7 @@ const SideBar = ({ historyOpen, toggleHistory }) => {
           historyOpen ? "w-60 p-4" : "w-0 p-0"
         }`}
       >
-        {historyOpen && <HistoryList />}
+        {historyOpen && <HistoryList setMovieData={setMovieData} />}
       </div>
     </div>
   );

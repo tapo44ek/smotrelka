@@ -98,6 +98,28 @@ async def get_movies(
         raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")
     
 
+@router.get("/last")
+async def get_movies_last(
+    user = Depends(get_user)
+):
+    """
+    Endpoint to change the password of the authenticated user.
+    """
+
+    try:
+        response = await MovieRepository.find_movies_by_user_id_last(
+            user_id=user.user_id
+        )
+        print(response)
+        return response
+    except HTTPException as e:
+        logger.error(f"Password change failed for user {user.email}: {e.detail}")
+        raise e
+    except Exception as e:
+        logger.error(f"Unexpected error during password change for user {user.email}: {str(e)}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")
+    
+
 @router.post("/fetch_movie")
 async def find_title(
     request: Request,
@@ -127,6 +149,36 @@ async def find_title(
         if response == None:
             raise HTTPException(status_code=404, detail="No titile found.")
         
+        return response
+    except HTTPException as e:
+        logger.error(f"Password change failed for user {user.email}: {e.detail}")
+        raise e
+    except Exception as e:
+        logger.error(f"Unexpected error during password change for user {user.email}: {str(e)}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")
+    
+
+@router.post("/last_seen")
+async def update_last_seen(
+    request: Request,
+    user = Depends(get_user)
+):
+    """
+    Endpoint to change the password of the authenticated user.
+    """
+
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Отсутствует access_token")
+
+    print(user)
+    body = await request.json()
+    print(body)
+    try:
+        response = await MovieRepository.update_last_seen(
+            user_id=user.user_id,
+            data=body
+        )
         return response
     except HTTPException as e:
         logger.error(f"Password change failed for user {user.email}: {e.detail}")
