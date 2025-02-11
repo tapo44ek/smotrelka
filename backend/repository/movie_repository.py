@@ -99,3 +99,44 @@ class MovieRepository:
             await session.commit()  # Подтверждаем удаление
 
             return {"message": "Фильм успешно удалён", "deleted_id": deleted_row[0]}
+        
+    
+    @classmethod
+    async def update_last_seen(cls, user_id: int, data: dict):
+        async with async_session_maker() as session:
+            query = text("""
+                UPDATE public.history
+                SET last_seen = NOW()
+                WHERE user_id = :user_id AND data = CAST(:data AS jsonb);
+            """)
+            print(user_id, data)
+            await session.execute(query, {
+                "user_id": user_id,
+                "data": json.dumps(data)  # 🔥 Сериализуем JSON перед отправкой
+            })
+
+            await session.commit()
+
+    
+
+    @classmethod
+    async def find_movies_by_user_id_last(cls, user_id: int):
+        """Получение истории фильмов пользователя по user_id"""
+        async with async_session_maker() as session:  # Создаём асинхронную сессию
+            query = text(f"""
+                SELECT id, data, last_seen 
+                FROM {Settings.DB_SCHEMA}.history 
+                WHERE user_id = :user_id
+                ORDER BY last_seen DESC
+            """)
+
+            result = await session.execute(query, {"user_id": user_id})
+            row = result.fetchone()
+
+            if not row:
+                return None  # Возвращаем пустой список, если история отсутствует
+
+            # Преобразуем SQL-результат в список JSON-совместимых словарей
+            movie = {"id": row.id, "data": row.data, "last_seen": row.last_seen}
+            
+            return movie  # FastAPI автоматически вернёт JSON
