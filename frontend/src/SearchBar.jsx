@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { sendMovieData, extractMovieData } from "./js/MainPageScript";
 
-const SearchBar = () => {
+const SearchBar = ({ setMovieData }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,9 +15,12 @@ const SearchBar = () => {
     setLoading(true);
     try {
       const movieData = await extractMovieData(searchQuery);
-      console.log(m)
+      console.log(movieData);
       if (movieData) {
         await sendMovieData(movieData);
+        
+        // 🔥 После успешного добавления обновляем плеер
+        setMovieData(movieData);
       } else {
         alert("Не удалось извлечь данные из указанного URL.");
       }
