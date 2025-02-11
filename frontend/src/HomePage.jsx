@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User, LogOut, Moon, Sun } from "lucide-react";
 import FooterPage from "./FooterPage";
-import SideBar from "./SideBar"; // Подключаем Sidebar
+import SideBar from "./SideBar";
 import Cookies from "js-cookie";
 import TestFetchButton from "./TestFetchButton";
 import SearchBar from "./SearchBar";
+import PlayerComponent from "./Player";
 
 const HomePage = () => {
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -13,6 +14,35 @@ const HomePage = () => {
     localStorage.getItem("theme") === "dark"
   );
   const navigate = useNavigate();
+  const [movieData, setMovieData] = useState(null); // Изначально null
+
+  // ✅ Функция для загрузки последнего просмотренного фильма
+  const fetchLastMovie = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/auth/history/last", {
+        credentials: "include",
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error("Ошибка при получении последнего фильма");
+      }
+
+      const lastMovie = await response.json();
+
+      if (lastMovie) {
+        console.log("📽️ Последний фильм:", lastMovie);
+        setMovieData(lastMovie.data); // Устанавливаем данные фильма
+      }
+    } catch (error) {
+      console.error("❌ Ошибка загрузки последнего фильма:", error);
+    }
+  };
+
+  // 🟢 Запрашиваем последний фильм при загрузке страницы
+  useEffect(() => {
+    fetchLastMovie();
+  }, []);
 
   // Сохраняем тему в localStorage и применяем ее
   useEffect(() => {
@@ -65,7 +95,11 @@ const HomePage = () => {
       {/* ОСНОВНОЙ КОНТЕЙНЕР */}
       <div className="flex flex-1 mt-20 relative">
         {/* ВСТАВЛЯЕМ Sidebar */}
-        <SideBar historyOpen={historyOpen} toggleHistory={() => setHistoryOpen(!historyOpen)} />
+        <SideBar 
+          historyOpen={historyOpen} 
+          toggleHistory={() => setHistoryOpen(!historyOpen)} 
+          setMovieData={setMovieData} 
+        />
 
         {/* ОСНОВНОЙ КОНТЕНТ */}
         <main
@@ -75,8 +109,11 @@ const HomePage = () => {
         >
           <h2 className="text-3xl font-semibold">Добро пожаловать в SMOTRELKA</h2>
           <p className="mt-4">Здесь будут фильмы, подборки и рекомендации.</p>
-          <TestFetchButton/>
-          <SearchBar/>
+          <TestFetchButton />
+          <SearchBar setMovieData={setMovieData} />
+
+          {/* ✅ Плеер только если есть данные */}
+          {movieData ? <PlayerComponent movieData={movieData} /> : <p>Загрузка плеера...</p>}
         </main>
       </div>
 

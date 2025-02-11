@@ -15,7 +15,7 @@ const SearchBar = () => {
     setLoading(true);
     try {
       const movieData = await extractMovieData(searchQuery);
-      console.log(movieData)
+      console.log(m)
       if (movieData) {
         await sendMovieData(movieData);
       } else {
