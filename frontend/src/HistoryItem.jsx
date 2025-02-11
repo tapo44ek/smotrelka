@@ -1,10 +1,10 @@
 import { XCircle } from "lucide-react";
 
-const HistoryItem = ({ movie, setMovieData, onRemove, fetchHistory }) => {
+const HistoryItem = ({ movie, setMovieData, onRemove, fetchHistory, darkMode }) => {
   return (
-    <div className="flex justify-between items-center p-2 bg-gray-700 rounded max-w-full">
+    <div className={`flex justify-between items-center p-2 rounded max-w-full ${darkMode ?  "bg-gray-900 hover:bg-gray-700 text-white" : "bg-zinc-200 hover:bg-zinc-300 text-black"}`}>
 <button
-  className="flex-1 text-left truncate"
+  className="flex-1 text-left truncate hover:drop-shadow-2xl"
   onClick={() => {
     setMovieData(movie.data); // ✅ Обновляем состояние плеера
 

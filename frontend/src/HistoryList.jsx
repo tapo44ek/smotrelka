@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import HistoryItem from "./HistoryItem";
 
-const HistoryList = ({ setMovieData }) => {
+const HistoryList = ({ setMovieData, darkMode }) => {
   const [history, setHistory] = useState([]);
   const [maxHeight, setMaxHeight] = useState("500px"); // Начальное значение
 
@@ -59,10 +59,11 @@ const HistoryList = ({ setMovieData }) => {
   return (
     <div
       ref={historyRef}
-      className="overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800 p-2 bg-gray-900 text-white rounded"
+      className={`overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800 p-2 rounded 
+        ${darkMode ?  "bg-gray-800 text-white" : "bg-zinc-100 text-black"}`}
       style={{ maxHeight }} // Устанавливаем динамическую высоту
     >
-      <h2 className="text-lg font-semibold mb-2">📜 История просмотров</h2>
+      
       {history.length === 0 ? (
         <p className="text-gray-400">История пуста</p>
       ) : (
@@ -74,6 +75,7 @@ const HistoryList = ({ setMovieData }) => {
               setMovieData={setMovieData}
               onRemove={deleteMovie}
               fetchHistory={fetchHistory}
+              darkMode={darkMode}
             />
           ))}
         </div>

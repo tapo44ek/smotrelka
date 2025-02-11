@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import HistoryList from "./HistoryList";
 
-const SideBar = ({ historyOpen, toggleHistory, setMovieData }) => {
+const SideBar = ({ historyOpen, toggleHistory, setMovieData, darkMode }) => {
   const sidebarRef = useRef(null);
 
   // 📌 Закрываем SideBar при клике вне него
@@ -25,29 +25,35 @@ const SideBar = ({ historyOpen, toggleHistory, setMovieData }) => {
   return (
     <div
       ref={sidebarRef}
-      className={`fixed top-16 bottom-16 left-0 flex transition-all duration-300 z-50 ${
-        historyOpen ? "w-64" : "w-16"
+      className={`fixed top-18 bottom-16 left-0 flex transition-all drop-shadow-2xl duration-300 z-50 rounded ${
+        historyOpen ? "w-1/3 min-w-[250px]" : "w-0"
       }`}
     >
       {/* Кнопка-шеврон внутри сайдбара */}
       <div
-        className="w-4 bg-gray-800 flex items-center justify-center cursor-pointer"
+        className={`w-8 flex items-center justify-center cursor-pointer ${darkMode ? "bg-zinc-900 text-white" : "bg-zinc-200 text-black"}`}
         onClick={() => toggleHistory(!historyOpen)}
       >
         {historyOpen ? (
-          <ChevronLeft size={24} className="text-white" />
+          <ChevronLeft size={24} className={`${darkMode ? "text-white" : "text-black"}`} />
         ) : (
-          <ChevronRight size={24} className="text-white" />
+          <ChevronRight size={24} className={`${darkMode ? "text-white" : "text-black"}`} />
         )}
       </div>
 
       {/* Контент истории */}
+      
       <div
-        className={`h-full bg-gray-900 text-white shadow-lg overflow-hidden transition-all duration-300 ${
-          historyOpen ? "w-60 p-4" : "w-0 p-0"
-        }`}
+        className={`h-full shadow-lg overflow-hidden transition-all duration-300 ${
+          historyOpen ? "w-full p-4" : "w-0 p-0"
+        }
+        ${darkMode ? "bg-gray-800 text-white" : "bg-zinc-100 text-black"}`}
       >
-        {historyOpen && <HistoryList setMovieData={setMovieData} />}
+        <ul>
+        <h2 className="text-lg font-semibold mb-2">📜 История просмотров</h2>
+        </ul>
+        <ul>{historyOpen && <HistoryList setMovieData={setMovieData} darkMode={darkMode}/>}</ul>
+        {/* {historyOpen && <HistoryList setMovieData={setMovieData} />} */}
       </div>
     </div>
   );

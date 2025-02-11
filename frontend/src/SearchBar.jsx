@@ -43,7 +43,7 @@ const SearchBar = ({ setMovieData }) => {
       />
       <button
         type="submit"
-        className="px-4 py-2 bg-blue-500 text-white rounded"
+        className="px-4 py-2 bg-black dark:bg-gray-200 text-white rounded"
         disabled={loading}
       >
         {loading ? "Загрузка..." : "Поиск"}

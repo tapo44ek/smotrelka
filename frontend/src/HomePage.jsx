@@ -63,15 +63,15 @@ const HomePage = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 transition-colors">
+    <div className={`w-full lg:grid lg:min-h-screen xl:min-h-screen relative overflow-hidden transition-colors duration-700 ${darkMode ? "bg-gray-900 text-white" : "bg-zinc-100 text-black"}`}>
       {/* ХЭДЕР */}
-      <header className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 bg-gray-900 text-white shadow-md z-50">
+      <header className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 bg-black text-white shadow-md z-50">
         <h1 className="text-2xl font-bold">SMOTRELKA.SPACE</h1>
 
         <div className="flex space-x-4">
           {/* Кнопка смены темы */}
           <button
-            className="p-2 bg-gray-800 rounded-md text-white hover:bg-gray-700 transition"
+            className="p-2 bg-black rounded-md text-white hover:bg-gray-700 transition"
             onClick={() => setDarkMode(!darkMode)}
           >
             {darkMode ? <Sun size={24} /> : <Moon size={24} />}
@@ -99,17 +99,19 @@ const HomePage = () => {
           historyOpen={historyOpen} 
           toggleHistory={() => setHistoryOpen(!historyOpen)} 
           setMovieData={setMovieData} 
+          darkMode={darkMode}
         />
 
         {/* ОСНОВНОЙ КОНТЕНТ */}
         <main
-          className={`flex-1 p-8 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-all duration-300 ${
-            historyOpen ? "ml-64" : "ml-0"
-          }`}
+          className={`flex-1 p-8 bg-transparent text-gray-800 dark:text-white transition-all duration-300 ${
+            historyOpen ? "ml-[33.33vw]" : "ml-0"
+          }
+          ${darkMode ? " text-white" : "text-black"}
+          `}
         >
           <h2 className="text-3xl font-semibold">Добро пожаловать в SMOTRELKA</h2>
           <p className="mt-4">Здесь будут фильмы, подборки и рекомендации.</p>
-          <TestFetchButton />
           <SearchBar setMovieData={setMovieData} />
 
           {/* ✅ Плеер только если есть данные */}
@@ -118,7 +120,7 @@ const HomePage = () => {
       </div>
 
       {/* ФОН ПОД ФУТЕРОМ */}
-      <div className="h-16 bg-gray-100 dark:bg-gray-900"></div>
+      <div className="h-16 bg-transparent"></div>
 
       {/* ФУТЕР */}
       <FooterPage darkMode={darkMode} />
