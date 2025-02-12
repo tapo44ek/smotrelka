@@ -28,8 +28,9 @@ class MovieRepository:
 
             result = await session.execute(query, {"link": link})
             row = result.fetchone()
+            print (f"row is {row}")
 
-            if not row:
+            if row == None:
                 return None   # Возвращаем пустой список, если история отсутствует
 
             # Преобразуем SQL-результат в список JSON-совместимых словарей
@@ -140,3 +141,22 @@ class MovieRepository:
             movie = {"id": row.id, "data": row.data, "last_seen": row.last_seen}
             
             return movie  # FastAPI автоматически вернёт JSON
+        
+    
+    @classmethod
+    async def add_title(cls, data: dict):
+        """Получение истории фильмов пользователя по user_id"""
+        link = data["link"]
+        name = data["name"]
+        year = data["year"]
+        
+        async with async_session_maker() as session:  # Создаём асинхронную сессию
+            query = text(f"""
+                INSERT INTO public.library ("link", name, year)
+                VALUES (:link, :name, :year)
+                ON CONFLICT ("link") 
+                DO NOTHING;
+            """)
+
+            await session.execute(query, {"link": link, "name": name, "year": str(year)})
+            await session.commit()

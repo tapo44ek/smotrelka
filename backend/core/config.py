@@ -22,4 +22,5 @@ class Settings:
     EMAIL_PASSWORD = os.environ['EMAIL_PASSWORD']
     EMAIL_SERVER = os.environ['EMAIL_SERVER']
     EMAIL_PORT = os.environ['EMAIL_PORT']
-    EMAIL_LOGIN= os.environ['EMAIL_LOGIN']
+    EMAIL_LOGIN = os.environ['EMAIL_LOGIN']
+    X_API_KEY = os.environ['X_API_KEY']

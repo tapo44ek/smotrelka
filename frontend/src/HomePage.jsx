@@ -4,20 +4,21 @@ import { User, LogOut, Moon, Sun } from "lucide-react";
 import FooterPage from "./FooterPage";
 import SideBar from "./SideBar";
 import Cookies from "js-cookie";
-import TestFetchButton from "./TestFetchButton";
 import SearchBar from "./SearchBar";
 import PlayerComponent from "./Player";
+import AuthImage from "./AuthImage";
 
 const HomePage = () => {
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("theme") === "dark"
-  );
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+  const [movieData, setMovieData] = useState(null);
+  const [loading, setLoading] = useState(true); // Добавляем состояние загрузки
+
   const navigate = useNavigate();
-  const [movieData, setMovieData] = useState(null); // Изначально null
 
   // ✅ Функция для загрузки последнего просмотренного фильма
   const fetchLastMovie = async () => {
+    setLoading(true); // Начинаем загрузку
     try {
       const response = await fetch("http://localhost:8000/auth/history/last", {
         credentials: "include",
@@ -30,12 +31,18 @@ const HomePage = () => {
 
       const lastMovie = await response.json();
 
-      if (lastMovie) {
+      if (lastMovie && lastMovie.data) {
         console.log("📽️ Последний фильм:", lastMovie);
-        setMovieData(lastMovie.data); // Устанавливаем данные фильма
+        setMovieData(lastMovie.data);
+      } else {
+        console.warn("📭 Нет данных о последнем фильме.");
+        setMovieData({ title: "empty_list" }); // Устанавливаем заглушку
       }
     } catch (error) {
       console.error("❌ Ошибка загрузки последнего фильма:", error);
+      setMovieData({ title: "empty_list" }); // Если ошибка — показываем заглушку
+    } finally {
+      setLoading(false); // Завершаем загрузку
     }
   };
 
@@ -63,37 +70,50 @@ const HomePage = () => {
   };
 
   return (
-    <div className={`w-full lg:grid lg:min-h-screen xl:min-h-screen relative overflow-hidden transition-colors duration-700 ${darkMode ? "bg-gray-900 text-white" : "bg-zinc-100 text-black"}`}>
-      {/* ХЭДЕР */}
-      <header className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 bg-black text-white shadow-md z-50">
-        <h1 className="text-2xl font-bold">SMOTRELKA.SPACE</h1>
+    <div className={`z-0 w-full h-screen lg:grid lg:min-h-screen xl:min-h-screen relative overflow-hidden transition-colors duration-700 ${darkMode ? "bg-gray-900 text-white" : "bg-zinc-100 text-black"}`}>
+      <div className="absolute inset-0 -z-10">
+        <AuthImage />
+      </div>
 
-        <div className="flex space-x-4">
+      {/* ХЭДЕР */}
+      <header className="fixed top-5 md:top-6 left-1/2 transform -translate-x-1/2 
+        w-11/12 md:w-4/5 max-w-5xl px-4 md:px-6 py-3 md:py-4 bg-black text-white 
+        shadow-xl rounded-2xl z-50 flex flex-wrap md:flex-nowrap 
+        items-center justify-between md:justify-between gap-2 md:gap-4 overflow-hidden">
+        
+        <h1 className="text-lg md:text-2xl font-bold w-full text-center md:w-auto md:text-left">
+          SMOTRELKA.SPACE
+        </h1>
+
+        {/* Кнопки справа */}
+        <div className="flex items-center gap-2 md:gap-4 flex-wrap justify-center md:justify-between w-full md:w-auto">
           {/* Кнопка смены темы */}
           <button
             className="p-2 bg-black rounded-md text-white hover:bg-gray-700 transition"
             onClick={() => setDarkMode(!darkMode)}
           >
-            {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+            {darkMode ? <Sun size={20} md:size={24} /> : <Moon size={20} md:size={24} />}
           </button>
 
-          <Link to="/settings" className="flex items-center space-x-2 hover:opacity-80">
-            <User size={24} />
-            <span>Настройки</span>
+          {/* Ссылка на настройки */}
+          <Link to="/profile" className="flex items-center space-x-1 md:space-x-2 hover:opacity-80">
+            <User size={20} md:size={24} />
+            <span className="text-sm md:text-base truncate">Настройки</span>
           </Link>
 
+          {/* Кнопка выхода */}
           <button 
             onClick={handleLogout}
-            className="flex items-center space-x-2 hover:opacity-80 bg-red-600 px-4 py-2 rounded-md"
+            className="flex items-center space-x-1 md:space-x-2 hover:opacity-80 bg-red-600 px-3 md:px-4 py-1 md:py-2 rounded-md"
           >
-            <LogOut size={24} />
-            <span>Выйти</span>
+            <LogOut size={20} md:size={24} />
+            <span className="text-sm md:text-base truncate">Выйти</span>
           </button>
         </div>
       </header>
 
-      {/* ОСНОВНОЙ КОНТЕЙНЕР */}
-      <div className="flex flex-1 mt-20 relative">
+      {/* ОСНОВНОЙ КОНТЕНТ */}
+      <div className="flex flex-1 mt-20 relative justify-center">
         {/* ВСТАВЛЯЕМ Sidebar */}
         <SideBar 
           historyOpen={historyOpen} 
@@ -102,20 +122,13 @@ const HomePage = () => {
           darkMode={darkMode}
         />
 
-        {/* ОСНОВНОЙ КОНТЕНТ */}
-        <main
-          className={`flex-1 p-8 bg-transparent text-gray-800 dark:text-white transition-all duration-300 ${
-            historyOpen ? "ml-[33.33vw]" : "ml-0"
-          }
-          ${darkMode ? " text-white" : "text-black"}
-          `}
-        >
-          <h2 className="text-3xl font-semibold">Добро пожаловать в SMOTRELKA</h2>
-          <p className="mt-4">Здесь будут фильмы, подборки и рекомендации.</p>
-          <SearchBar setMovieData={setMovieData} />
-
-          {/* ✅ Плеер только если есть данные */}
-          {movieData ? <PlayerComponent movieData={movieData} /> : <p>Загрузка плеера...</p>}
+        <main className="flex-1 w-full mt-10 mx-auto md:max-w-screen-lg p-4 md:p-8 bg-transparent text-gray-800 dark:text-white transition-all duration-300">
+          {/* Если идет загрузка, показываем индикатор */}
+          {loading ? (
+            <p className="text-center text-lg font-semibold text-gray-500">Загрузка...</p>
+          ) : (
+            <PlayerComponent movieData={movieData} setHistoryOpen={setHistoryOpen} setMovieData={setMovieData} darkMode={darkMode} />
+          )}
         </main>
       </div>
 
@@ -123,7 +136,9 @@ const HomePage = () => {
       <div className="h-16 bg-transparent"></div>
 
       {/* ФУТЕР */}
-      <FooterPage darkMode={darkMode} />
+      <div className="absolute bottom-0 z-50 w-full">
+        <FooterPage darkMode={darkMode} />
+      </div>
     </div>
   );
 };

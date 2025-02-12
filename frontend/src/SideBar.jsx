@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { XCircle, Clock } from "lucide-react";
 import HistoryList from "./HistoryList";
 
 const SideBar = ({ historyOpen, toggleHistory, setMovieData, darkMode }) => {
-  const sidebarRef = useRef(null);
+  const modalRef = useRef(null);
 
-  // 📌 Закрываем SideBar при клике вне него
+  // 📌 Закрываем модальное окно при клике вне него
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-        toggleHistory(false); // Закрываем SideBar
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        toggleHistory(false); // Закрываем модалку
       }
     };
 
@@ -23,39 +23,42 @@ const SideBar = ({ historyOpen, toggleHistory, setMovieData, darkMode }) => {
   }, [historyOpen]); // ✅ Следим за `historyOpen`
 
   return (
-    <div
-      ref={sidebarRef}
-      className={`fixed top-18 bottom-16 left-0 flex transition-all drop-shadow-2xl duration-300 z-50 rounded ${
-        historyOpen ? "w-1/3 min-w-[250px]" : "w-0"
-      }`}
-    >
-      {/* Кнопка-шеврон внутри сайдбара */}
+    <>
+      {/* 📌 Затемнение и размытие фона при открытии (не мешает кликам) */}
+      {historyOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300 z-60 pointer-events-none"></div>
+      )}
+
+      {/* 📌 Всплывающее окно истории (по центру) */}
       <div
-        className={`w-8 flex items-center justify-center cursor-pointer ${darkMode ? "bg-zinc-900 text-white" : "bg-zinc-200 text-black"}`}
-        onClick={() => toggleHistory(!historyOpen)}
+        ref={modalRef}
+        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+        w-11/12 max-w-lg p-6 rounded-2xl shadow-2xl transition-all duration-300 z-70 pointer-events-auto
+        ${historyOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"}
+        ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"}`}
       >
-        {historyOpen ? (
-          <ChevronLeft size={24} className={`${darkMode ? "text-white" : "text-black"}`} />
-        ) : (
-          <ChevronRight size={24} className={`${darkMode ? "text-white" : "text-black"}`} />
-        )}
+        {/* Заголовок + Кнопка закрытия */}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">📜 История просмотров</h2>
+          <button onClick={() => toggleHistory(false)} className="text-red-500 hover:text-red-700">
+            <XCircle size={24} />
+          </button>
+        </div>
+
+        {/* Контент истории */}
+        {historyOpen && <HistoryList setMovieData={setMovieData} darkMode={darkMode} />}
       </div>
 
-      {/* Контент истории */}
-      
-      <div
-        className={`h-full shadow-lg overflow-hidden transition-all duration-300 ${
-          historyOpen ? "w-full p-4" : "w-0 p-0"
-        }
-        ${darkMode ? "bg-gray-800 text-white" : "bg-zinc-100 text-black"}`}
-      >
-        <ul>
-        <h2 className="text-lg font-semibold mb-2">📜 История просмотров</h2>
-        </ul>
-        <ul>{historyOpen && <HistoryList setMovieData={setMovieData} darkMode={darkMode}/>}</ul>
-        {/* {historyOpen && <HistoryList setMovieData={setMovieData} />} */}
-      </div>
-    </div>
+      {/* 📌 Кнопка открытия (левый верхний угол) */}
+      {/* {!historyOpen && (
+        <button
+          onClick={() => toggleHistory(true)}
+          className="fixed top-6 left-6 p-4 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition z-50"
+        >
+          <Clock size={24} />
+        </button>
+      )} */}
+    </>
   );
 };
 

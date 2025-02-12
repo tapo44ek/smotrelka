@@ -4,6 +4,8 @@ import logging
 from JWTs import DecodeJWT
 from models.user import UserJWTData
 from repository.movie_repository import MovieRepository
+from utils.movies import get_title_api
+import re
 
 get_user = DecodeJWT(UserJWTData)
 
@@ -111,6 +113,9 @@ async def get_movies_last(
             user_id=user.user_id
         )
         print(response)
+        if response == None:
+            response = {'title':"empty_list"}
+            print(response)
         return response
     except HTTPException as e:
         logger.error(f"Password change failed for user {user.email}: {e.detail}")
@@ -140,14 +145,27 @@ async def find_title(
         raise HTTPException(status_code=400, detail="Missing 'id' in request body")
     print(body["url"])
     link = MovieRepository.extract_kinopoisk_path(body["url"])
-
     print(body)
     try:
         response = await MovieRepository.find_title(
             link=link
         )
+        print(response)
         if response == None:
-            raise HTTPException(status_code=404, detail="No titile found.")
+            pattern = r"/(?:film|series)/(\d+)/"
+            match = re.search(pattern, link)
+
+            if match:
+                id = match.group(1)
+                print(id)
+                title, year = await get_title_api(int(id))
+
+                a = await MovieRepository.add_title({"link": link, "name": title, "year": year})
+
+                response = {"name": f"{title} ({year})"}
+
+            else:
+                raise HTTPException(status_code=404, detail="No title found.")
         
         return response
     except HTTPException as e:
