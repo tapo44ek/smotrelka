@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const ResetPasswordModal = ({ isOpen, onClose, darkMode }) => {
   const [email, setEmail] = useState("");
   const [isSent, setIsSent] = useState(false);
@@ -12,7 +14,7 @@ const ResetPasswordModal = ({ isOpen, onClose, darkMode }) => {
     try {
         const formData = new FormData();
         formData.append("email", email);
-      const response = await fetch("http://localhost:8000/auth/auth/reset_password", {
+      const response = await fetch(`${backendUrl}/auth/auth/reset_password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

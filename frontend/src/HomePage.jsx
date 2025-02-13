@@ -8,6 +8,9 @@ import SearchBar from "./SearchBar";
 import PlayerComponent from "./Player";
 import AuthImage from "./AuthImage";
 
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const HomePage = () => {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
@@ -20,7 +23,7 @@ const HomePage = () => {
   const fetchLastMovie = async () => {
     setLoading(true); // Начинаем загрузку
     try {
-      const response = await fetch("http://localhost:8000/auth/history/last", {
+      const response = await fetch(`${backendUrl}/auth/history/last`, {
         credentials: "include",
         method: "GET",
       });

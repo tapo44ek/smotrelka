@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Cookies from "js-cookie";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const LoginForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,7 +16,7 @@ const LoginForm = () => {
       formData.append("email", data.email);
       formData.append("password", data.password);
 
-      const response = await axios.post("http://localhost:8000/auth/auth/login", data, {
+      const response = await axios.post(`${backendUrl}/auth/auth/login`, data, {
         headers: { "Content-Type": "application/json" }, withCredentials:  "include",
       });
 

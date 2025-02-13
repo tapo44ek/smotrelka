@@ -1,5 +1,6 @@
 import { XCircle } from "lucide-react";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const HistoryItem = ({ movie, setMovieData, onRemove, fetchHistory, darkMode }) => {
   return (
     <div className={`flex justify-between items-center p-2 rounded max-w-full ${darkMode ?  "bg-gray-900 hover:bg-gray-700 text-white" : "bg-zinc-200 hover:bg-zinc-300 text-black"}`}>
@@ -9,7 +10,7 @@ const HistoryItem = ({ movie, setMovieData, onRemove, fetchHistory, darkMode }) 
     setMovieData(movie.data); // ✅ Обновляем состояние плеера
 
     // 🔥 Отправляем запрос на обновление last_seen
-    fetch("http://localhost:8000/auth/history/last_seen", {
+    fetch(`${backendUrl}/auth/history/last_seen`, {
       method: "POST",
       credentials: "include",
       headers: {

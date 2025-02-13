@@ -5,6 +5,10 @@ import FooterPage from "./FooterPage";
 import AuthImage from "./AuthImage";
 import Cookies from "js-cookie";
 
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+
 const ProfilePage = () => {
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -42,7 +46,7 @@ const ProfilePage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/auth/auth/change_password", {
+      const response = await fetch(`${backendUrl}/auth/auth/change_password`, {
         method: "POST",
         credentials: "include",
         headers: {

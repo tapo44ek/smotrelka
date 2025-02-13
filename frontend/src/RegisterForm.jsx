@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const RegisterForm = () => {
   const {
     register,
@@ -15,7 +17,7 @@ const RegisterForm = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/auth/auth/register",
+        `${backendUrl}/auth/auth/register`,
         data,
         {
           headers: { "Content-Type": "application/json" },
@@ -24,7 +26,7 @@ const RegisterForm = () => {
 
       localStorage.setItem("token", response.data.access_token);
       setMessage("Успешная регистрация!");
-      window.location.href = "http://10.9.96.160:3001/dashboard";
+      navigate('/');
     } catch (error) {
       setMessage(
         "Ошибка: " + (error.response?.data?.detail || "Неизвестная ошибка")

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import HistoryItem from "./HistoryItem";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const HistoryList = ({ setMovieData, darkMode }) => {
   const [history, setHistory] = useState([]);
@@ -17,7 +18,7 @@ const HistoryList = ({ setMovieData, darkMode }) => {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch("http://localhost:8000/auth/history/hist", {
+      const response = await fetch(`${backendUrl}/auth/history/hist`, {
         credentials: "include",
         method: "GET",
       });
@@ -30,7 +31,7 @@ const HistoryList = ({ setMovieData, darkMode }) => {
 
   const deleteMovie = async (id) => {
     try {
-      const response = await fetch("http://localhost:8000/auth/history/remove", {
+      const response = await fetch(`${backendUrl}/auth/history/remove`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

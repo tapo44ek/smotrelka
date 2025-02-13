@@ -9,9 +9,9 @@ export default function FooterPage({ darkMode }) {
 		  
 		  {/* 📌 Навигация (с разреженными ссылками) */}
 		  <ul className="flex flex-col items-center text-center space-y-4 md:flex-row md:space-y-0 md:space-x-8 tracking-wide">
-			<li className="hover:opacity-80 cursor-pointer" href="http://localhost:5173/privacy">
+			<li className="hover:opacity-80 cursor-pointer" href="/privacy">
 			<a
-			  href="http://localhost:5173/privacy"
+			  href="/privacy"
 			  target="_blank"
 			>
 				Политика обработки персональных данных
