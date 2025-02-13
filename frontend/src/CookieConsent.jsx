@@ -20,7 +20,7 @@ const CookieConsent = () => {
   if (!show) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-8 md:right-8 bg-gray-800 text-white p-4 rounded-lg shadow-lg flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4 animate-fade-in">
+    <div className="z-90 fixed bottom-4 left-4 right-4 md:left-8 md:right-8 bg-gray-800 text-white p-4 rounded-lg shadow-lg flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4 animate-fade-in">
       <p className="text-sm text-gray-300">
         Мы используем файлы cookies для улучшения работы сайта. Подробности в{" "}
         <a href="/policy" className="underline text-blue-400 hover:text-blue-500">

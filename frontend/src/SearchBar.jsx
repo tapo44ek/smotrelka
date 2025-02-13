@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { sendMovieData, extractMovieData } from "./js/MainPageScript";
 
-const SearchBar = ({ setMovieData }) => {
+const SearchBar = ({ setMovieData, darkMode }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -38,12 +38,12 @@ const SearchBar = ({ setMovieData }) => {
         type="text"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="border p-2 rounded w-full"
+        className={`border p-2 rounded w-full ${darkMode ? "border-white text-white": "border-black text-black"}`}
         placeholder="Введите ссылку на фильм..."
       />
       <button
         type="submit"
-        className="px-4 py-2 bg-black dark:bg-gray-200 text-white rounded"
+        className="px-4 py-2 bg-black text-white rounded"
         disabled={loading}
       >
         {loading ? "Загрузка..." : "Поиск"}

@@ -51,7 +51,7 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
 
                 {/* 🔍 Поисковая строка */}
                 <div className="w-full max-w-xs md:max-w-md">
-                    <SearchBar setMovieData={setMovieData} />
+                    <SearchBar setMovieData={setMovieData} darkMode={darkMode} />
                 </div>
             </div>
 

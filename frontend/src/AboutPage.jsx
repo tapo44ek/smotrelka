@@ -29,7 +29,7 @@ const AboutPage = () => {
   }, [darkMode]);
 
   return (
-    <div className="flex flex-col min-h-screen"> {/* Глобальный контейнер страницы */}
+    <div className="flex flex-col h-screen"> {/* Глобальный контейнер страницы */}
       
       {/* Основной контент страницы, занимает все доступное пространство */}
       <div className="flex-grow flex flex-col">
@@ -40,7 +40,7 @@ const AboutPage = () => {
         >
           {/* Кнопка переключения темы */}
           <button
-            className="absolute top-5 right-5 p-2 rounded-full bg-gray-200 dark:bg-gray-800 z-50"
+            className="absolute top-5 right-5 p-2 rounded-full bg-gray-200 z-50"
             onClick={() => setDarkMode(!darkMode)}
           >
             {darkMode ? (
@@ -82,9 +82,10 @@ const AboutPage = () => {
         </div>
       </div>
 
-      {/* Футер всегда внизу */}
-      <FooterPage darkMode={darkMode}/>
-    </div>
+      <div className="absolute bottom-0 z-50 w-full">
+        <FooterPage darkMode={darkMode} />
+      </div>
+      </div>
   );
 };
 

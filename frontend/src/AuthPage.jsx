@@ -31,7 +31,7 @@ const AuthPage = () => {
     
     {/* Кнопка переключения темы */}
     <button
-      className="absolute top-5 right-5 p-2 rounded-full bg-gray-200 dark:bg-gray-800 z-50 hidden lg:block"
+      className="absolute top-5 right-5 p-2 rounded-full bg-gray-200 z-50 hidden lg:block"
       onClick={() => setDarkMode(!darkMode)}
     >
       {darkMode ? <Sun className="text-yellow-400" /> : <Moon className="text-gray-700" />}
@@ -45,11 +45,11 @@ const AuthPage = () => {
       </div>
 
       {/* 📌 Контейнер формы */}
-      <div className="relative z-10 bg-white dark:bg-gray-800 p-6 -top-16 rounded-xl shadow-2xl w-full max-w-sm">
+      <div className="relative z-10 bg-white p-6 -top-16 rounded-xl shadow-2xl w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center">
           {isRegistering ? "Регистрация" : "Вход"}
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-center mb-4">
+        <p className="text-gray-500 text-center mb-4">
           {isRegistering ? "Создайте аккаунт" : "Введите данные для входа"}
         </p>
 
@@ -89,12 +89,12 @@ const AuthPage = () => {
           </p>
           {isRegistering ? <RegisterForm /> : <LoginForm />}
         </div>
-        <button
+        {/* <button
                 onClick={() => setIsResetOpen(true)}
                 className="text-blue-500 hover:text-blue-700 text-sm mt-2 block text-center"
               >
                 Забыли пароль?
-              </button>
+              </button> */}
         <button
           className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
           onClick={() => setIsRegistering(!isRegistering)}

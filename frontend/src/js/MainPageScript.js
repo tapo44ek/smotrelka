@@ -3,8 +3,9 @@ const IMDB_MATCHER = /imdb\.com\/title\/tt\.*/;
 const TMDB_MATCHER = /themoviedb\.org\/(movie|tv)\/\.*/;
 const LETTERBOXD_MATCHER = /letterboxd\.com\/film\/\.*/;
 const MATCHERS = [KINOPOISK_MATCHER, IMDB_MATCHER, TMDB_MATCHER, LETTERBOXD_MATCHER];
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const send_data_url = "http://localhost:8000/auth/history/add/"; // Укажи свой URL API
+const send_data_url = `${backendUrl}/auth/history/add`; // Укажи свой URL API
 
 export async function sendMovieData(data) {
   const dataSerialized = JSON.stringify(data);
@@ -58,7 +59,7 @@ export async function fetchTitleKinopoisk(link) {
 
 export async function fetchTitleWithFallback(link) {
   try {
-    const response = await fetch("http://localhost:8000/auth/history/fetch_movie/", {
+    const response = await fetch(`${backendUrl}/auth/history/fetch_movie`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
