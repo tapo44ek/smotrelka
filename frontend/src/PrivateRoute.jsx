@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 const PrivateRoute = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const token = Cookies.get("access_token") || localStorage.getItem("token");
+  const token = Cookies.get("access_token");
 
   useEffect(() => {
     if (!token) {

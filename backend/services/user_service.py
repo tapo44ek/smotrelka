@@ -6,7 +6,8 @@ from core.httpexceptions import (
     InvalidPasswordException,
     UserNotFoundException,
     UserAlreadyExistsException,
-    EmailSendException
+    EmailSendException,
+    UserAlreadyExistsLoginException
 )
 from utils.password_utils import validate_password, generate_new_password, get_password_hash
 from utils.email_service import send_email_with_new_password
@@ -17,17 +18,34 @@ from JWTs import create_jwt_token, DecodeJWT
 class UserService:
 
 
-    async def validate_user(self, email: EmailStr, password: str) -> bool:
+    async def validate_user(self, email: str, password: str) -> bool:
         """Validate user credentials."""
-        user = await UserRepository.find_user_by_email(email)
-        if not user:
-            logger.warning(f"User with email {email} not found.")
-            raise UserNotFoundException(email)
+        if "@" in email:
+            user = await UserRepository.find_user_by_email(email)
 
-        password_from_db = await UserRepository.find_password_by_email(email)
-        if not validate_password(password, password_from_db):
-            logger.warning(f"Invalid password for user {email}.")
-            raise InvalidPasswordException(email)
+            if not user:
+                logger.warning(f"User with email {email} not found.")
+                raise UserNotFoundException(email)
+
+            password_from_db = await UserRepository.find_password_by_email(email)
+            
+            if not validate_password(password, password_from_db):
+                logger.warning(f"Invalid password for user {email}.")
+                raise InvalidPasswordException(email)
+        else:
+            print('11!!11!!')
+            user = await UserRepository.find_user_by_login(email)
+
+            if not user:
+                logger.warning(f"User with email {email} not found.")
+                raise UserNotFoundException(email)
+
+            password_from_db = await UserRepository.find_password_by_login(email)
+            
+            if not validate_password(password, password_from_db):
+                logger.warning(f"Invalid password for user {email}.")
+                raise InvalidPasswordException(email)
+
 
         logger.info(f"User {email} validated successfully.")
         return True
@@ -38,6 +56,10 @@ class UserService:
         if await UserRepository.does_user_exist(email):
             logger.warning(f"User with email {email} already exists.")
             raise UserAlreadyExistsException()
+        
+        if await UserRepository.does_user_exist_login(name):
+            logger.warning(f"User with login {name} already exists.")
+            raise UserAlreadyExistsLoginException()
 
         await UserRepository.create_user(email, name, password)
         logger.info(f"User {email} registered successfully.")

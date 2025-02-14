@@ -14,7 +14,7 @@ const AboutPage = () => {
 
   // Проверяем наличие токена при загрузке
   useEffect(() => {
-    const token = Cookies.get("access_token") || localStorage.getItem("token");
+    const token = Cookies.get("access_token");
     setIsAuthenticated(!!token);
   }, []);
 

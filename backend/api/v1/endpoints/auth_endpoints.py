@@ -11,6 +11,7 @@ from JWTs import create_jwt_token, DecodeJWT
 from models.user import UserJWTData
 from pydantic import EmailStr
 from core.httpexceptions import EmailSendException
+from repository.user_repository import UserRepository
 
 
 get_user = DecodeJWT(UserJWTData)
@@ -34,6 +35,7 @@ async def register_user(user: UserRegisterShema, response : Response):
         return {"message": "User created successfully!"}
 
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -73,7 +75,9 @@ async def login_user(response: Response, user: UserLoginShema):
         is_valid_user = await user_service.validate_user(email=user.email, password=user.password)
         if not is_valid_user:
             raise HTTPException(status_code=401, detail="Invalid credentials")
-        
+
+        user.email = await UserRepository.find_email_by_login(name=user.email)
+
         # Получение данных для JWT
         user_data = await user_service.get_user_data_for_jwt(email=user.email)
         

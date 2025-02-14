@@ -20,6 +20,21 @@ class UserRepository:
             result = await session.execute(query.params(email=email))
             row = result.fetchone()
             return {"user_id": row[0], "email": row[1], "name": row[2]} if row else None
+        
+
+class UserRepository:
+    @classmethod
+    async def find_user_by_login(cls, name: str) -> dict | None:
+        """Find user by email."""
+        async with async_session_maker() as session:
+            query = text(f"""
+                SELECT id, email, name 
+                FROM {Settings.DB_SCHEMA}.user 
+                WHERE name = :name
+            """)
+            result = await session.execute(query.params(name=name))
+            row = result.fetchone()
+            return {"user_id": row[0], "email": row[1], "name": row[2]} if row else None
 
 
     @classmethod
@@ -34,6 +49,34 @@ class UserRepository:
             result = await session.execute(query.params(email=email))
             row = result.fetchone()
             return row[0] if row else None
+        
+    
+    @classmethod
+    async def find_password_by_login(cls, name: str) -> str | None:
+        """Get password hash by email."""
+        async with async_session_maker() as session:
+            query = text(f"""
+                SELECT hashed_pass 
+                FROM {Settings.DB_SCHEMA}.user 
+                WHERE name = :name
+            """)
+            result = await session.execute(query.params(name=name))
+            row = result.fetchone()
+            return row[0] if row else None
+        
+    
+    @classmethod
+    async def find_email_by_login(cls, name: str) -> str | None:
+        """Get password hash by email."""
+        async with async_session_maker() as session:
+            query = text(f"""
+                SELECT email 
+                FROM {Settings.DB_SCHEMA}.user 
+                WHERE name = :name
+            """)
+            result = await session.execute(query.params(name=name))
+            row = result.fetchone()
+            return row[0] if row else None
 
 
     @classmethod
@@ -42,6 +85,15 @@ class UserRepository:
         async with async_session_maker() as session:
             query = text(f"SELECT 1 FROM {Settings.DB_SCHEMA}.user WHERE email = :email")
             result = await session.execute(query.params(email=email))
+            return result.scalar() is not None
+        
+    
+    @classmethod
+    async def does_user_exist_login(cls, name: str) -> bool:
+        """Check if a user exists by email."""
+        async with async_session_maker() as session:
+            query = text(f"SELECT 1 FROM {Settings.DB_SCHEMA}.user WHERE name = :name")
+            result = await session.execute(query.params(name=name))
             return result.scalar() is not None
 
 

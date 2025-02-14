@@ -16,7 +16,11 @@ class JWTException(HTTPException):
         super().__init__(status_code=401, detail=detail)
 
 class UserAlreadyExistsException(HTTPException):
-    def __init__(self, detail: str = "User already exists"):
+    def __init__(self, detail: str = "Этот email уже зарегистрирован"):
+        super().__init__(status_code=400, detail=detail)
+
+class UserAlreadyExistsLoginException(HTTPException):
+    def __init__(self, detail: str = "Этот логин уже зарегистрирован"):
         super().__init__(status_code=400, detail=detail)
 
 class EmailSendException(HTTPException):

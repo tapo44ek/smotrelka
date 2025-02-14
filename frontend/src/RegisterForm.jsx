@@ -28,8 +28,14 @@ const RegisterForm = () => {
       setMessage("Успешная регистрация!");
       navigate('/');
     } catch (error) {
+
+      if (error.response.status === 400) {
+        setMessage("❌ " + (error.response?.data?.detail || "Неизвестная ошибка"));
+        return;
+      }
+
       setMessage(
-        "Ошибка: " + (error.response?.data?.detail || "Неизвестная ошибка")
+        "❌ Ошибка: " + (error.response?.data?.detail || "Неизвестная ошибка")
       );
     }
   };
@@ -38,6 +44,7 @@ const RegisterForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 text-center">
       {/* 📌 Поле: Почта */}
       <div className="text-left">
+      {message && <p className="mt-3 text-center text-red font-semibold">{message}</p>}
         <label className="text-sm font-medium">Почта</label>
         <input
           {...register("email", { required: "Почта обязательна" })}

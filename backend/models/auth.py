@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr
 
 
 class UserLoginShema(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 
