@@ -60,6 +60,11 @@ const ProfilePage = () => {
 
       const data = await response.json();
 
+      if (response.status === 401) {
+        navigate("/auth"); // Перенаправляем на страницу авторизации
+        return Promise.reject("Unauthorized");
+    }
+
       if (response.ok) {
         setMessage("✅ Пароль успешно изменен!");
         setCurrentPassword("");

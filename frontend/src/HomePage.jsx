@@ -28,9 +28,16 @@ const HomePage = () => {
         method: "GET",
       });
 
+      if (response.status === 401) {
+        navigate("/auth"); // Перенаправляем на страницу авторизации
+        return Promise.reject("Unauthorized");
+    }
+
       if (!response.ok) {
         throw new Error("Ошибка при получении последнего фильма");
       }
+
+      
 
       const lastMovie = await response.json();
 

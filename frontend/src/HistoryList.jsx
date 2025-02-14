@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import HistoryItem from "./HistoryItem";
+import { useNavigate } from "react-router-dom";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const HistoryList = ({ setMovieData, darkMode }) => {
@@ -7,6 +8,8 @@ const HistoryList = ({ setMovieData, darkMode }) => {
   const [maxHeight, setMaxHeight] = useState("500px"); // Начальное значение
 
   const historyRef = useRef(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchHistory();
@@ -22,6 +25,13 @@ const HistoryList = ({ setMovieData, darkMode }) => {
         credentials: "include",
         method: "GET",
       });
+
+      if (response.status === 401) {
+        navigate("/auth"); // Перенаправляем на страницу авторизации
+        return Promise.reject("Unauthorized");
+    }
+
+
       const data = await response.json();
       setHistory(data);
     } catch (error) {
@@ -37,6 +47,11 @@ const HistoryList = ({ setMovieData, darkMode }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
       });
+
+      if (response.status === 401) {
+        navigate("/auth"); // Перенаправляем на страницу авторизации
+        return Promise.reject("Unauthorized");
+    }
 
       if (response.ok) {
         setHistory((prevHistory) => prevHistory.filter((movie) => movie.id !== id));

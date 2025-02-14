@@ -19,6 +19,12 @@ const HistoryItem = ({ movie, setMovieData, onRemove, fetchHistory, darkMode }) 
       body: JSON.stringify(movie.data)
     })
     .then((response) => {
+
+      if (response.status === 401) {
+        navigate("/auth"); // Перенаправляем на страницу авторизации
+        return Promise.reject("Unauthorized");
+    }
+    
       if (!response.ok) {
         throw new Error("Ошибка обновления last_seen");
       }

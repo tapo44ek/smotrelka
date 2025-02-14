@@ -44,7 +44,7 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
                 {/* 📌 Кнопка Истории */}
                 <button
                     onClick={() => setHistoryOpen(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-700 transition text-sm md:text-base"
+                    className="px-4 py-2 bg-black text-white rounded-md shadow-md hover:bg-gray-300 transition text-sm md:text-base"
                 >
                     История
                 </button>
