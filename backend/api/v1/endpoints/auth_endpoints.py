@@ -76,7 +76,8 @@ async def login_user(response: Response, user: UserLoginShema):
         if not is_valid_user:
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
-        user.email = await UserRepository.find_email_by_login(name=user.email)
+        if "@" not in user.email:
+            user.email = await UserRepository.find_email_by_login(name=user.email)
 
         # Получение данных для JWT
         user_data = await user_service.get_user_data_for_jwt(email=user.email)

@@ -19,10 +19,10 @@ class UserRepository:
             """)
             result = await session.execute(query.params(email=email))
             row = result.fetchone()
+            print(row)
             return {"user_id": row[0], "email": row[1], "name": row[2]} if row else None
         
 
-class UserRepository:
     @classmethod
     async def find_user_by_login(cls, name: str) -> dict | None:
         """Find user by email."""
