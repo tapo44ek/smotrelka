@@ -37,7 +37,7 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
     return (
         <div 
             id="container" 
-            className="relative flex flex-col items-center justify-center w-full max-w-[95vw] mx-auto px-2 md:px-4 overflow-hidden"
+            className=" grid w-full items-center justify-center w-full max-w-[95vw] mx-auto px-2 md:px-4 overflow-hidden"
         >
             {/* 🔹 Контейнер для кнопок истории и поиска */}
             <div className="relative w-full max-w-screen-sm md:max-w-screen-md lg:max-w-2xl flex justify-between items-center px-2 py-1">
@@ -58,8 +58,8 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
             {/* 📌 Окно плеера */}
             <div 
                 id="player" 
-                className={`relative w-full max-w-screen-sm md:max-w-screen-md lg:max-w-2xl min-w-[300px] drop-shadow-xl transition-all duration-600
-                 rounded-lg shadow-lg p-3 mt-2 ${darkMode ? "bg-gray-900 text-white" : "bg-zinc-300 text-black"}`}
+                className={`w-full h-auto max-w-screen-sm md:max-w-screen-md lg:max-w-2xl min-w-[300px] drop-shadow-xl items-center transition-all duration-600
+                 rounded-lg shadow-lg p-2 ${darkMode ? "bg-zinc-900 text-white" : "bg-zinc-300 text-black"}`}
             >
                 {/* 🔹 Заголовок */}
                 <div id="header" className="flex justify-between items-center p-2">
@@ -71,7 +71,7 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
                 {/* 🔹 Контент */}
                 <div 
                     id="content" 
-                    className="flex justify-center items-center rounded-lg w-full h-auto min-h-[200px] md:aspect-[16/9]"
+                    className="grid grid-cols-1 justify-center items-center rounded-lg w-full h-[40vh] min-h-[200px] md:aspect-[16/9]"
                 >
                     {isEmpty ? (
                         <p className="text-lg font-semibold text-gray-500">Тут пока пусто</p>
@@ -88,7 +88,7 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
 
                 {/* 🔹 Источники */}
                 {playerReady && sources.length > 0 && (
-                    <div id="sources" className="flex flex-wrap justify-center gap-1 p-2">
+                    <div id="sources" className="flex flex-wrap justify-center items-center gap-1 p-2">
                         {sources.map((source, index) => (
                             <button
                                 key={index}

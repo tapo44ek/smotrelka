@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import SearchBar from "./SearchBar";
 import PlayerComponent from "./Player";
 import AuthImage from "./AuthImage";
+import CookieConsent from "./CookieConsent";
 
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -123,7 +124,7 @@ const HomePage = () => {
       </header>
 
       {/* ОСНОВНОЙ КОНТЕНТ */}
-      <div className="flex flex-1 mt-20 relative justify-center">
+      <div className="grid z-70 w-full relative h-screen items-center justify-center">
         {/* ВСТАВЛЯЕМ Sidebar */}
         <SideBar 
           historyOpen={historyOpen} 
@@ -132,7 +133,7 @@ const HomePage = () => {
           darkMode={darkMode}
         />
 
-        <main className="flex-1 w-full mt-10 mx-auto md:max-w-screen-lg p-4 md:p-8 bg-transparent text-gray-800 dark:text-white transition-all duration-300">
+        <main className="grid w-full z-70 h-[50wh] grid-cols-1 mx-auto justify-center items-center md:max-w-screen-xl max-h-[calc(80vh-20px)] p-4 md:p-8 bg-transparent text-gray-800 transition-all duration-300">
           {/* Если идет загрузка, показываем индикатор */}
           {loading ? (
             <p className="text-center text-lg font-semibold text-gray-500">Загрузка...</p>
@@ -147,6 +148,7 @@ const HomePage = () => {
 
       {/* ФУТЕР */}
       <div className="absolute bottom-0 z-50 w-full">
+      <CookieConsent />
         <FooterPage darkMode={darkMode} />
       </div>
     </div>

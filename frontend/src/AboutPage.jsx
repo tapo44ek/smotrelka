@@ -4,6 +4,7 @@ import { Moon, Sun } from "lucide-react";
 import Cookies from "js-cookie";
 import AuthImage from "./AuthImage";
 import FooterPage from "./FooterPage";
+import CookieConsent from "./CookieConsent";
 
 const AboutPage = () => {
   const navigate = useNavigate();
@@ -83,6 +84,7 @@ const AboutPage = () => {
       </div>
 
       <div className="absolute bottom-0 z-50 w-full">
+      <CookieConsent />
         <FooterPage darkMode={darkMode} />
       </div>
       </div>

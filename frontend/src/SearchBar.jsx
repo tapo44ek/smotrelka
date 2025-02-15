@@ -38,7 +38,7 @@ const SearchBar = ({ setMovieData, darkMode }) => {
         type="text"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className={`border p-2 rounded w-full ${darkMode ? "border-white text-white": "border-black text-black"}`}
+        className={`border p-2 rounded bg-transparent w-full ${darkMode ? "border-white text-white": "border-black text-black"}`}
         placeholder="Введите ссылку на фильм..."
       />
       <button

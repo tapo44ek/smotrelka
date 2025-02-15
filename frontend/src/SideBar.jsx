@@ -24,18 +24,21 @@ const SideBar = ({ historyOpen, toggleHistory, setMovieData, darkMode }) => {
 
   return (
     <>
-      {/* 📌 Затемнение и размытие фона при открытии (не мешает кликам) */}
-      {historyOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300 z-60 pointer-events-none"></div>
-      )}
+{/* 📌 Затемнение фона */}
+{historyOpen && (
+  <div 
+    className="fixed inset-0 bg-black/50 backdrop-blur-md transition-opacity duration-300 z-[99] pointer-events-none" 
+    onClick={() => toggleHistory(false)} 
+  />
+)}
 
-      {/* 📌 Всплывающее окно истории (по центру) */}
-      <div
-        ref={modalRef}
-        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-        w-11/12 max-w-lg p-6 rounded-2xl shadow-2xl transition-all duration-300 z-70 pointer-events-auto
-        ${historyOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"}
-        ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"}`}
+{/* 📌 Всплывающее окно истории */}
+<div
+  ref={modalRef}
+  className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+  w-11/12 max-w-lg p-6 rounded-2xl shadow-2xl transition-all duration-300 z-[100]
+  ${historyOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"}
+  ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"}`}
       >
         {/* Заголовок + Кнопка закрытия */}
         <div className="flex justify-between items-center mb-4">

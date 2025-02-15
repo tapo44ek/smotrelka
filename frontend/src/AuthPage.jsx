@@ -6,6 +6,7 @@ import RegisterForm from "./RegisterForm";
 import { Moon, Sun } from "lucide-react"; // Иконки
 import FooterPage from "./FooterPage";
 import ResetPasswordModal from "./ResetPasswordModal"; 
+import CookieConsent from "./CookieConsent";
 
 const AuthPage = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -116,6 +117,7 @@ const AuthPage = () => {
 
   {/* ✅ Футер (закреплен внизу) */}
   <div className="absolute bottom-0 z-50 w-full">
+  <CookieConsent />
   <FooterPage darkMode={darkMode} className="mt-auto"/>
   </div>
         {/* ✅ Подключаем модальное окно */}

@@ -1,9 +1,7 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import LoginPage from './LoginPage.jsx';
 import RegisterPage from './RegisterPage.jsx';
 import AuthPage from './AuthPage.jsx';
 import AboutPage from './AboutPage.jsx';
@@ -13,6 +11,9 @@ import LoginRoute from './LoginRoute';
 import PrivacyPolicy from './PrivacyPage.jsx';
 import CookieConsent from "./CookieConsent";
 import ProfilePage from './ProfilePage.jsx';
+
+
+
 
 
 createRoot(document.getElementById('root')).render(
@@ -26,7 +27,6 @@ createRoot(document.getElementById('root')).render(
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
       </Routes>
-      <CookieConsent />
     </BrowserRouter>
   </StrictMode>,
 )

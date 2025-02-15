@@ -75,7 +75,7 @@ const HistoryList = ({ setMovieData, darkMode }) => {
   return (
     <div
       ref={historyRef}
-      className={`overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800 p-2 rounded 
+      className={`overflow-y-scroll z-50 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800 p-2 rounded 
         ${darkMode ?  "bg-gray-800 text-white" : "bg-white text-black"}`}
       style={{ maxHeight }} // Устанавливаем динамическую высоту
     >

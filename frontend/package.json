@@ -10,7 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
     "@tailwindcss/vite": "^4.0.0",
+    "@vitejs/plugin-legacy": "^6.0.1",
     "axios": "^1.7.9",
     "framer-motion": "^12.3.1",
     "js-cookie": "^3.0.5",

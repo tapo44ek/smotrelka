@@ -4,6 +4,7 @@ import { Home, LogOut, Moon, Sun } from "lucide-react";
 import FooterPage from "./FooterPage";
 import AuthImage from "./AuthImage";
 import Cookies from "js-cookie";
+import CookieConsent from "./CookieConsent";
 
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -132,7 +133,7 @@ const ProfilePage = () => {
               <label className="block text-sm font-medium">Текущий пароль</label>
               <input 
                 type="password" 
-                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border bg-transparent rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required 
@@ -143,7 +144,7 @@ const ProfilePage = () => {
               <label className="block text-sm font-medium">Новый пароль</label>
               <input 
                 type="password" 
-                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border bg-transparent rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required 
@@ -154,7 +155,7 @@ const ProfilePage = () => {
               <label className="block text-sm font-medium">Повторите новый пароль</label>
               <input 
                 type="password" 
-                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border bg-transparent rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required 
@@ -173,6 +174,7 @@ const ProfilePage = () => {
 
       {/* ФУТЕР */}
       <div className="absolute bottom-0 w-full">
+      <CookieConsent />
         <FooterPage darkMode={darkMode} />
       </div>
     </div>
