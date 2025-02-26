@@ -46,7 +46,7 @@ const AuthPage = () => {
       </div>
 
       {/* 📌 Контейнер формы */}
-      <div className="relative z-10 bg-white p-6 -top-16 rounded-xl shadow-2xl w-full max-w-sm">
+      <div className="relative z-10 bg-transparent p-6 -top-16 rounded-xl shadow-2xl w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center">
           {isRegistering ? "Регистрация" : "Вход"}
         </h1>

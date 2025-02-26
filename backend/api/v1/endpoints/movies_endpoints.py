@@ -145,6 +145,7 @@ async def find_title(
         raise HTTPException(status_code=400, detail="Missing 'id' in request body")
     print(body["url"])
     link = MovieRepository.extract_kinopoisk_path(body["url"])
+    print(link)
     print(body)
     try:
         response = await MovieRepository.find_title(
