@@ -12,7 +12,7 @@ class MovieRepository:
 
     @classmethod
     def extract_kinopoisk_path(cls, url):
-        match = re.search(r"https?:\/\/www\.kinopoisk\.ru\/(film|series)\/\d+\/", url)
+        match = re.search(r"https?:\/\/(www\.)?kinopoisk\.ru\/(film|series)\/\d+", url)
         return match.group(0)[len("https://www.kinopoisk.ru"):] if match else None
     
 
