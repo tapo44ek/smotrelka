@@ -145,6 +145,7 @@ async def find_title(
         raise HTTPException(status_code=400, detail="Missing 'id' in request body")
     print(body["url"])
     link = MovieRepository.extract_kinopoisk_path(body["url"])
+    link = link + '/' if not link.endswith('/') else link
     print(link)
     print(body)
     try:
@@ -153,7 +154,7 @@ async def find_title(
         )
         print(response)
         if response == None:
-            pattern = r"/(?:film|series)/\d+"
+            pattern = r"/(?:film|series)/(\d+)/"
             match = re.search(pattern, link)
 
             if match:
