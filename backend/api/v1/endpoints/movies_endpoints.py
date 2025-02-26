@@ -153,7 +153,7 @@ async def find_title(
         )
         print(response)
         if response == None:
-            pattern = r"/(?:film|series)/(\d+)/"
+            pattern = r"/(?:film|series)/\d+"
             match = re.search(pattern, link)
 
             if match:
