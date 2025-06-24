@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends, Request, Response
 from services.user_service import UserService
 import logging
 from JWTs import DecodeJWT
@@ -6,6 +6,8 @@ from models.user import UserJWTData
 from repository.movie_repository import MovieRepository
 from utils.movies import get_title_api
 import re
+import httpx
+from urllib.parse import urlencode
 
 get_user = DecodeJWT(UserJWTData)
 
@@ -99,6 +101,34 @@ async def get_movies(
         logger.error(f"Unexpected error during password change for user {user.email}: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")
     
+
+@router.get("/proxy")
+async def proxy(request: Request):
+    # Проксируем запрос к https://kinobox.tv/api/players
+    base_url = "https://kinobox.tv/api/players"
+
+    # Собираем все query-параметры
+    query = dict(request.query_params)
+    query_string = urlencode(query, doseq=True)
+
+    # Собираем итоговый URL
+    full_url = f"{base_url}?{query_string}"
+
+    try:
+        async with httpx.AsyncClient() as client:
+            proxied_response = await client.get(full_url, headers={
+                "User-Agent": request.headers.get("user-agent", "Mozilla")
+            })
+
+        return Response(
+            content=proxied_response.content,
+            status_code=proxied_response.status_code,
+            media_type=proxied_response.headers.get("content-type", "application/json"),
+            headers={"Access-Control-Allow-Origin": "*"}  # ← можно ограничить, например, 'https://smotrelka.space'
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Proxy error: {str(e)}")
+
 
 @router.get("/last")
 async def get_movies_last(

@@ -89,35 +89,44 @@ export async function init(data, scriptVersion) {
  * Запрос источников с Kinobox API
  * @param {object} movieData
  */
+const PROXY_API = 'https://smotrelka.space/api/auth/history/proxy';
+
 async function fetchSources(movieData) {
-    try {
-        console.log("Запрос источников для:", movieData);
+  try {
+    console.log("Запрос источников для:", movieData);
 
-        const apiURL = new URL(KINOBOX_API);
-        Object.entries(movieData).forEach(([key, value]) => apiURL.searchParams.set(key, value));
-        apiURL.searchParams.set('sources', SOURCES.join(','));
+    const apiURL = new URL(PROXY_API);
+    Object.entries(movieData).forEach(([key, value]) => {
+      if (value != null) apiURL.searchParams.set(key, value);
+    });
+    apiURL.searchParams.set('sources', SOURCES.join(','));
 
-        const response = await fetch(apiURL, { method: 'GET' });
+    const response = await fetch(apiURL.toString(), {
+      method: 'GET',
+      // НЕ ставим mode: 'cors' или credentials — не нужно, если сервер сам отвечает с нужным заголовком
+    });
 
-        if (!response.ok) {
-            throw new Error(`Ошибка запроса: ${response.status}`);
-        }
-
-        const playersData = await response.json();
-
-        if (!Array.isArray(playersData)) {
-            console.error("❌ API вернул не массив:", playersData);
-            return [];
-        }
-
-        const validSources = playersData.filter((player) => player?.iframeUrl && player?.success && player?.source);
-        console.log("🎯 Фильтрованные источники:", validSources);
-
-        return validSources;
-    } catch (error) {
-        console.error("❌ Ошибка при запросе источников:", error);
-        return []; // Возвращаем пустой массив, чтобы избежать undefined
+    if (!response.ok) {
+      throw new Error(`Ошибка запроса: ${response.status}`);
     }
+
+    const playersData = await response.json();
+
+    if (!Array.isArray(playersData)) {
+      console.error("❌ API вернул не массив:", playersData);
+      return [];
+    }
+
+    const validSources = playersData.filter((player) =>
+      player?.iframeUrl && player?.success && player?.source
+    );
+
+    console.log("🎯 Фильтрованные источники:", validSources);
+    return validSources;
+  } catch (error) {
+    console.error("❌ Ошибка при запросе источников:", error);
+    return [];
+  }
 }
 
 /**

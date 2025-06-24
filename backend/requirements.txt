@@ -9,7 +9,9 @@ dnspython==2.7.0
 email_validator==2.2.0
 fastapi==0.115.8
 greenlet==3.1.1
-h11==0.14.0
+h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
 idna==3.10
 JWT_tapo44ek==1.0.5
 psycopg2-binary==2.9.10
