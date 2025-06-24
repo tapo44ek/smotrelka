@@ -105,7 +105,7 @@ async def get_movies(
 @router.get("/proxy")
 async def proxy(request: Request):
     # Проксируем запрос к https://kinobox.tv/api/players
-    base_url = "https://kinobox.tv/api/players"
+    base_url = "https://p.ddbb.lol/api/players"
 
     # Собираем все query-параметры
     query = dict(request.query_params)
