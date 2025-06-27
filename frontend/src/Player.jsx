@@ -57,7 +57,7 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
 
             {/* 📌 Окно плеера */}
             <div 
-                id="player" 
+                id="vibix_union" 
                 className={`w-full h-auto max-w-screen-sm md:max-w-screen-md lg:max-w-2xl min-w-[300px] drop-shadow-xl items-center transition-all duration-600
                  rounded-lg shadow-lg p-2 ${darkMode ? "bg-zinc-900 text-white" : "bg-zinc-300 text-black"}`}
             >

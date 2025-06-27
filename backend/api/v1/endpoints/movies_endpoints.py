@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request, Response
+import json
 from services.user_service import UserService
+from services.balance_service import Players
 import logging
 from JWTs import DecodeJWT
 from models.user import UserJWTData
@@ -92,7 +94,7 @@ async def get_movies(
         response = await MovieRepository.find_movies_by_user_id(
             user_id=user.user_id
         )
-        print(response)
+        # print(response)
         return response
     except HTTPException as e:
         logger.error(f"Password change failed for user {user.email}: {e.detail}")
@@ -106,11 +108,14 @@ async def get_movies(
 async def proxy(request: Request):
     # Проксируем запрос к https://kinobox.tv/api/players
     base_url = "https://p.ddbb.lol/api/players"
-
+    player = Players()
     # Собираем все query-параметры
     query = dict(request.query_params)
     query_string = urlencode(query, doseq=True)
-
+    vibix = await player.get_players(query)
+    print(f"query = {query}")
+    # logger.log("query = " + query)
+    print(f"vibix = {vibix}")
     # Собираем итоговый URL
     full_url = f"{base_url}?{query_string}"
 
@@ -119,9 +124,17 @@ async def proxy(request: Request):
             proxied_response = await client.get(full_url, headers={
                 "User-Agent": request.headers.get("user-agent", "Mozilla")
             })
+        print(proxied_response.content)
+        print(type(proxied_response.content))
+        response = proxied_response.json()
+        filtered = [item for item in response if item.get("source") not in {"Turbo", "Vibix"}]
+        filtered.append(vibix)
 
+        print(response)
+
+        json_data = json.dumps(filtered).encode("utf-8")
         return Response(
-            content=proxied_response.content,
+            content=json_data,
             status_code=proxied_response.status_code,
             media_type=proxied_response.headers.get("content-type", "application/json"),
             headers={"Access-Control-Allow-Origin": "*"}  # ← можно ограничить, например, 'https://smotrelka.space'
@@ -142,10 +155,10 @@ async def get_movies_last(
         response = await MovieRepository.find_movies_by_user_id_last(
             user_id=user.user_id
         )
-        print(response)
+        # print(response)
         if response == None:
             response = {'title':"empty_list"}
-            print(response)
+            # print(response)
         return response
     except HTTPException as e:
         logger.error(f"Password change failed for user {user.email}: {e.detail}")

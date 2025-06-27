@@ -24,3 +24,6 @@ class Settings:
     EMAIL_PORT = os.environ['EMAIL_PORT']
     EMAIL_LOGIN = os.environ['EMAIL_LOGIN']
     X_API_KEY = os.environ['X_API_KEY']
+
+class BalancerKeys:
+    VIBIX_KEY = os.environ["VIBIX_KEY"]

@@ -90,6 +90,7 @@ export async function init(data, scriptVersion) {
  * @param {object} movieData
  */
 const PROXY_API = 'https://smotrelka.space/api/auth/history/proxy';
+// const PROXY_API = 'http://localhost:8000/auth/history/proxy';
 
 async function fetchSources(movieData) {
   try {
