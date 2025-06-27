@@ -120,9 +120,17 @@ async function fetchSources(movieData) {
     const validSources = playersData.filter((player) =>
       player?.iframeUrl && player?.success && player?.source
     );
+    const priority = ["Alloha", "Collaps", "Vibix"];
+    const sortedSources = validSources.sort((a, b) => {
+    const aIndex = priority.indexOf(a.source);
+    const bIndex = priority.indexOf(b.source);
 
-    console.log("🎯 Фильтрованные источники:", validSources);
-    return validSources;
+  // Если источник не найден — ставим в конец (index = Infinity)
+    return (aIndex === -1 ? Infinity : aIndex) - (bIndex === -1 ? Infinity : bIndex);
+});
+
+    console.log("🎯 Фильтрованные источники:", sortedSources);
+    return sortedSources;
   } catch (error) {
     console.error("❌ Ошибка при запросе источников:", error);
     return [];
