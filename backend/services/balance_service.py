@@ -31,7 +31,7 @@ class Players:
                     }
                     return result
                 else: 
-                    result = {
+                    return {
                         'source': 'Vibix',
                         'iframeUrl': '',
                         'translations': [],
@@ -41,7 +41,43 @@ class Players:
             else: raise HTTPException(status_code=404, detail='search_link is empty')
         except Exception as e: 
             raise HTTPException(status_code=500, detail=f'{str(e)}')
+        
 
+    async def get_alloha_player(self, params :dict) -> dict | None:
+        ALLOHA_KEY = '5009a7a2d05cb714cc53c8408471e3'
+
+        result = {
+                'source': 'Alloha',
+                'iframeUrl': '',
+                'translations': [],
+                'success': True,
+                'updatedAt': []
+            }
+
+        if not params['kinopoisk']:
+            return  result
+
+
+        base_link = f'https://api.alloha.tv/?token={ALLOHA_KEY}&kp={params["kinopoisk"]}'
+
+        try:
+            response = requests.get(base_link)
+            print(response)
+            if response.ok:
+                data = response.json()
+                print("data.  ", data)
+                result = {
+                    'source': 'Alloha',
+                    'iframeUrl': data['data']['iframe'],
+                    'translations': data['data']['translation_iframe'],
+                    'success': True,
+                    'updatedAt': []
+                }
+                print(result)
+
+            return result
+        except Exception as e: 
+            raise HTTPException(status_code=500, detail=f'{str(e)}')
 
         
 
@@ -51,5 +87,8 @@ class Players:
         """search videos from balancers"""
         print(params)
         balancers_available = ["Vibix"]
+        result = []
+        vibix = await self.get_vibix_player(params)
+        alloha = await self.get_alloha_player(params)
 
-        return await self.get_vibix_player(params)
+        return [vibix, alloha]

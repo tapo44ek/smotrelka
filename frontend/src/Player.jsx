@@ -78,6 +78,7 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
                     ) : playerReady && iframeUrl ? (
                         <iframe
                             src={iframeUrl}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                             allowFullScreen
                             className="w-full h-full rounded-lg"
                         ></iframe>

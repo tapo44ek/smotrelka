@@ -106,7 +106,6 @@ async def get_movies(
 
 @router.get("/proxy")
 async def proxy(request: Request):
-    # Проксируем запрос к https://kinobox.tv/api/players
     base_url = "https://p.ddbb.lol/api/players"
     player = Players()
     # Собираем все query-параметры
@@ -124,20 +123,21 @@ async def proxy(request: Request):
             proxied_response = await client.get(full_url, headers={
                 "User-Agent": request.headers.get("user-agent", "Mozilla")
             })
-        print(proxied_response.content)
-        print(type(proxied_response.content))
+        # print(proxied_response.content)
+        # print(type(proxied_response.content))
         response = proxied_response.json()
-        filtered = [item for item in response if item.get("source") not in {"Turbo", "Vibix"}]
-        filtered.append(vibix)
+        filtered = [item for item in response if item.get("source") not in {"Turbo", "Vibix", "Alloha"}]
+        for item in vibix:
+            filtered.append(item)
 
-        print(response)
+        print(vibix)
 
         json_data = json.dumps(filtered).encode("utf-8")
         return Response(
             content=json_data,
             status_code=proxied_response.status_code,
             media_type=proxied_response.headers.get("content-type", "application/json"),
-            headers={"Access-Control-Allow-Origin": "*"}  # ← можно ограничить, например, 'https://smotrelka.space'
+            headers={"Access-Control-Allow-Origin": "*"}
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Proxy error: {str(e)}")
@@ -204,6 +204,7 @@ async def find_title(
                 id = match.group(1)
                 print(id)
                 title, year = await get_title_api(int(id))
+                print(title)
 
                 a = await MovieRepository.add_title({"link": link, "name": title, "year": year})
 
