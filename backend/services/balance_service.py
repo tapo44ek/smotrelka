@@ -13,7 +13,6 @@ class Players:
             'X-CSRF-TOKEN': ''
         }
 
-
         if params['kinopoisk']:
             search_link = base_link + 'kp/' + params['kinopoisk']
         
@@ -35,7 +34,7 @@ class Players:
                         'source': 'Vibix',
                         'iframeUrl': '',
                         'translations': [],
-                        'success': True,
+                        'success': False,
                         'updatedAt': []
                     }
             else: raise HTTPException(status_code=404, detail='search_link is empty')
@@ -44,13 +43,12 @@ class Players:
         
 
     async def get_alloha_player(self, params :dict) -> dict | None:
-        ALLOHA_KEY = '5009a7a2d05cb714cc53c8408471e3'
 
         result = {
                 'source': 'Alloha',
                 'iframeUrl': '',
                 'translations': [],
-                'success': True,
+                'success': False,
                 'updatedAt': []
             }
 
@@ -58,7 +56,40 @@ class Players:
             return  result
 
 
-        base_link = f'https://api.alloha.tv/?token={ALLOHA_KEY}&kp={params["kinopoisk"]}'
+        base_link = f'https://api.alloha.tv/?token={BalancerKeys.ALLOHA_KEY}&kp={params["kinopoisk"]}'
+
+        try:
+            response = requests.get(base_link)
+            print(response)
+            if response.ok:
+                data = response.json()
+                result = {
+                    'source': 'Alloha',
+                    'iframeUrl': data['data']['iframe'],
+                    'translations': data['data']['translation_iframe'],
+                    'success': True,
+                    'updatedAt': []
+                }
+
+            return result
+        except Exception as e: 
+            raise HTTPException(status_code=500, detail=f'{str(e)}')
+        
+
+    async def get_collaps_player(self, params :dict) -> dict | None:
+
+        result = {
+                'source': 'Collaps',
+                'iframeUrl': '',
+                'translations': [],
+                'success': False,
+                'updatedAt': []
+            }
+
+        if not params['kinopoisk']:
+            return  result
+
+        base_link = f'https://api.bhcesh.me/franchise/details?token={BalancerKeys.COLLAPS_KEY}&kinopoisk_id={params["kinopoisk"]}'
 
         try:
             response = requests.get(base_link)
@@ -67,9 +98,9 @@ class Players:
                 data = response.json()
                 print("data.  ", data)
                 result = {
-                    'source': 'Alloha',
-                    'iframeUrl': data['data']['iframe'],
-                    'translations': data['data']['translation_iframe'],
+                    'source': 'Collaps',
+                    'iframeUrl': data['iframe_url'],
+                    'translations': [],
                     'success': True,
                     'updatedAt': []
                 }
@@ -79,16 +110,13 @@ class Players:
         except Exception as e: 
             raise HTTPException(status_code=500, detail=f'{str(e)}')
 
-        
-
 
 
     async def get_players(self, params :dict) -> dict:
         """search videos from balancers"""
         print(params)
-        balancers_available = ["Vibix"]
-        result = []
         vibix = await self.get_vibix_player(params)
         alloha = await self.get_alloha_player(params)
+        collaps = await self.get_collaps_player(params)
 
-        return [vibix, alloha]
+        return [vibix, alloha, collaps]

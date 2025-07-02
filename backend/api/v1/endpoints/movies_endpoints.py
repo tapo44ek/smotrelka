@@ -23,7 +23,7 @@ async def add_movie(
     user = Depends(get_user)
 ):
     """
-    Endpoint to change the password of the authenticated user.
+    Endpoint to add a movie.
     """
 
     access_token = request.cookies.get("access_token")
@@ -40,10 +40,10 @@ async def add_movie(
         )
         return response
     except HTTPException as e:
-        logger.error(f"Password change failed for user {user.email}: {e.detail}")
+        logger.error(f"Movie add failed for user {user.email}: {e.detail}")
         raise e
     except Exception as e:
-        logger.error(f"Unexpected error during password change for user {user.email}: {str(e)}")
+        logger.error(f"Unexpected error during movie add for user {user.email}: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")
     
 
@@ -53,7 +53,7 @@ async def remove_movie(
     user = Depends(get_user)
 ):
     """
-    Endpoint to change the password of the authenticated user.
+    Endpoint to remove a movie from a history
     """
 
     access_token = request.cookies.get("access_token")
@@ -74,10 +74,10 @@ async def remove_movie(
         )
         return response
     except HTTPException as e:
-        logger.error(f"Password change failed for user {user.email}: {e.detail}")
+        logger.error(f"movie removing failed for user {user.email}: {e.detail}")
         raise e
     except Exception as e:
-        logger.error(f"Unexpected error during password change for user {user.email}: {str(e)}")
+        logger.error(f"Unexpected error during movie removing for user {user.email}: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")
     
     
@@ -87,7 +87,7 @@ async def get_movies(
     user = Depends(get_user)
 ):
     """
-    Endpoint to change the password of the authenticated user.
+    History list
     """
 
     try:
@@ -97,50 +97,41 @@ async def get_movies(
         # print(response)
         return response
     except HTTPException as e:
-        logger.error(f"Password change failed for user {user.email}: {e.detail}")
+        logger.error(f"History failed for user {user.email}: {e.detail}")
         raise e
     except Exception as e:
-        logger.error(f"Unexpected error during password change for user {user.email}: {str(e)}")
+        logger.error(f"Unexpected error during History get for user {user.email}: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")
     
 
 @router.get("/proxy")
 async def proxy(request: Request):
+
+    '''
+    Оставим тут для истории ссылку на альтернативу кинобоксу (АПИ)
     base_url = "https://p.ddbb.lol/api/players"
+    '''
+
     player = Players()
-    # Собираем все query-параметры
     query = dict(request.query_params)
-    query_string = urlencode(query, doseq=True)
-    vibix = await player.get_players(query)
-    print(f"query = {query}")
-    # logger.log("query = " + query)
-    print(f"vibix = {vibix}")
-    # Собираем итоговый URL
-    full_url = f"{base_url}?{query_string}"
+    players = await player.get_players(query)
 
     try:
-        async with httpx.AsyncClient() as client:
-            proxied_response = await client.get(full_url, headers={
-                "User-Agent": request.headers.get("user-agent", "Mozilla")
-            })
-        # print(proxied_response.content)
-        # print(type(proxied_response.content))
-        response = proxied_response.json()
-        filtered = [item for item in response if item.get("source") not in {"Turbo", "Vibix", "Alloha"}]
-        for item in vibix:
-            filtered.append(item)
 
-        print(vibix)
+        data = []
+        for item in players:
+            data.append(item)
 
-        json_data = json.dumps(filtered).encode("utf-8")
+        json_data = json.dumps(data).encode("utf-8")
         return Response(
             content=json_data,
-            status_code=proxied_response.status_code,
-            media_type=proxied_response.headers.get("content-type", "application/json"),
+            status_code=200,
+            media_type="application/json",
             headers={"Access-Control-Allow-Origin": "*"}
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Proxy error: {str(e)}")
+
 
 
 @router.get("/last")
@@ -148,7 +139,7 @@ async def get_movies_last(
     user = Depends(get_user)
 ):
     """
-    Endpoint to change the password of the authenticated user.
+    Get last seen movie.
     """
 
     try:
@@ -174,7 +165,7 @@ async def find_title(
     user = Depends(get_user)
 ):
     """
-    Endpoint to change the password of the authenticated user.
+    Endpoint to fetch movie title.
     """
 
     access_token = request.cookies.get("access_token")
@@ -215,10 +206,10 @@ async def find_title(
         
         return response
     except HTTPException as e:
-        logger.error(f"Password change failed for user {user.email}: {e.detail}")
+        logger.error(f"movie search failed for user {user.email}: {e.detail}")
         raise e
     except Exception as e:
-        logger.error(f"Unexpected error during password change for user {user.email}: {str(e)}")
+        logger.error(f"Unexpected error during fetching title for user {user.email}: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")
     
 
@@ -228,7 +219,7 @@ async def update_last_seen(
     user = Depends(get_user)
 ):
     """
-    Endpoint to change the password of the authenticated user.
+    Update last seen movie.
     """
 
     access_token = request.cookies.get("access_token")
@@ -245,8 +236,8 @@ async def update_last_seen(
         )
         return response
     except HTTPException as e:
-        logger.error(f"Password change failed for user {user.email}: {e.detail}")
+        logger.error(f"Update history failed for user {user.email}: {e.detail}")
         raise e
     except Exception as e:
-        logger.error(f"Unexpected error during password change for user {user.email}: {str(e)}")
+        logger.error(f"Unexpected error during history update for user {user.email}: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")

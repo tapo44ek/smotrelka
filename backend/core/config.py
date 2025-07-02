@@ -27,3 +27,5 @@ class Settings:
 
 class BalancerKeys:
     VIBIX_KEY = os.environ["VIBIX_KEY"]
+    ALLOHA_KEY = os.environ["ALLOHA_KEY"]
+    COLLAPS_KEY = os.environ["COLLAPS_KEY"]
