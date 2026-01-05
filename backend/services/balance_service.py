@@ -13,6 +13,14 @@ class Players:
             'X-CSRF-TOKEN': ''
         }
 
+        result =    {
+                        'source': 'Vibix',
+                        'iframeUrl': '',
+                        'translations': [],
+                        'success': False,
+                        'updatedAt': []
+                    }
+
         if params['kinopoisk']:
             search_link = base_link + 'kp/' + params['kinopoisk']
         
@@ -30,16 +38,11 @@ class Players:
                     }
                     return result
                 else: 
-                    return {
-                        'source': 'Vibix',
-                        'iframeUrl': '',
-                        'translations': [],
-                        'success': False,
-                        'updatedAt': []
-                    }
-            else: raise HTTPException(status_code=404, detail='search_link is empty')
+                    return result
+            else: return result
         except Exception as e: 
-            raise HTTPException(status_code=500, detail=f'{str(e)}')
+            print(f'{str(e)}')
+            return result
         
 
     async def get_alloha_player(self, params :dict) -> dict | None:
@@ -73,7 +76,8 @@ class Players:
 
             return result
         except Exception as e: 
-            raise HTTPException(status_code=500, detail=f'{str(e)}')
+            print(f'{str(e)}')
+            return result
         
 
     async def get_collaps_player(self, params :dict) -> dict | None:
@@ -107,8 +111,10 @@ class Players:
                 print(result)
 
             return result
-        except Exception as e: 
-            raise HTTPException(status_code=500, detail=f'{str(e)}')
+        except Exception as e:
+            print(f'{str(e)}')
+            return(result)
+
 
 
 
