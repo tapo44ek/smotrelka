@@ -62,7 +62,7 @@ class Players:
         base_link = f'https://api.alloha.tv/?token={BalancerKeys.ALLOHA_KEY}&kp={params["kinopoisk"]}'
 
         try:
-            response = requests.get(base_link)
+            response = requests.get(base_link, verify=False)
             print(response)
             if response.ok:
                 data = response.json()
