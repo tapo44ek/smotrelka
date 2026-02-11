@@ -5,7 +5,7 @@ from core.config import Settings
 
 
 async def get_title_api(id: int):
-    url = f"https://api.kinopoisk.dev/v1.4/movie/{id}"
+    url = f"https://api.poiskkino.dev/v1.4/movie/{id}"
     headers = {
         "accept": "application/json",
         "X-API-KEY": f"{Settings.X_API_KEY}"
