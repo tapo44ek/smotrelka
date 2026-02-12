@@ -139,3 +139,58 @@ class UserRepository:
                 "name": row[1],
                 "email": row[2]
             } if row else None
+        
+    @classmethod
+    async def create_qr_login(cls):
+        """Get user data needed for JWT payload."""
+        async with async_session_maker() as session:
+            query = text(f"""
+                INSERT INTO public.validator (uuid)
+                VALUES (gen_random_uuid())
+                RETURNING *
+            """)
+            result = await session.execute(query)
+            await session.commit()
+            row = result.fetchone()
+            return row if row else None
+        
+    @classmethod
+    async def check_qr_login(cls, qr_hash: str) -> str | None:
+        """Get user data needed for JWT payload."""
+        async with async_session_maker() as session:
+            query = text(f"""
+                SELECT jwt_approved FROM public.validator
+                WHERE uuid = :qr_hash
+                ORDER BY created_at DESC
+                LIMIT 1;
+            """)
+            result = await session.execute(query.params(qr_hash=qr_hash))
+            row = result.fetchone()
+            return row if row else None
+        
+    @classmethod
+    async def approve_qr_login(cls, jwt: str, qr_hash: str):
+        """Get user data needed for JWT payload."""
+        async with async_session_maker() as session:
+            query = text(f"""
+                UPDATE {Settings.DB_SCHEMA}.validator 
+                SET jwt_approved = :jwt 
+                WHERE uuid = :qr_hash
+                RETURNING *;
+            """)
+            result = await session.execute(query.params(jwt=jwt, qr_hash=qr_hash))
+            row = result.fetchone()
+            await session.commit()
+            return row if row else None
+    
+    @classmethod
+    async def clear_qr_login(cls, qr_hash: str) -> bool | None:
+        """Get user data needed for JWT payload."""
+        async with async_session_maker() as session:
+            query = text(f"""
+                DELETE FROM {Settings.DB_SCHEMA}.validator 
+                WHERE uuid = :qr_hash
+            """)
+            await session.execute(query.params(qr_hash=qr_hash))
+            await session.commit()
+            return True

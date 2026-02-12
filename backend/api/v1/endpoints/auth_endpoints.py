@@ -130,3 +130,74 @@ async def reset_password(data: dict):
         logger.error(f"Unexpected error during password reset for email {email}: {str(e)}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred. Please try again later.")
     
+@router.post("/qr_login/create", summary="Авторизация пользователя")
+async def login_user(response: Response):
+    """
+    Logining user and create JWT
+    """
+    try:
+        
+        # Проверка валидности пользователя
+        user_service = UserService()
+        row = await user_service.create_qr_login()
+        print(row)
+       
+        return {"uid": str(row[0])}
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+    
+@router.post("/qr_login/approve", summary="Авторизация пользователя")
+async def login_user(response: Response, qr_uuid: str, user = Depends(get_user)):
+    """
+    Logining user and create JWT
+    """
+    try:
+        
+        # Проверка валидности пользователя
+        print(user.user_id)
+        token = await create_jwt_token({"user_id": user.user_id, "email": user.email})
+        print(token)
+        user_service = UserService()
+        result = await user_service.approve_qr_login(qr_uuid, token)
+        # row = await user_service.approve_qr_login()
+        # print(row)
+        print(result)
+       
+        return {"uuid": result[0]}
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+    
+@router.get("/qr_login/check_approve", summary="Авторизация пользователя")
+async def login_user(response: Response, qr_uuid: str):
+    """
+    Logining user and create JWT
+    """
+    try:
+        # Проверка валидности пользователя
+        user_service = UserService()
+        row = await user_service.check_qr_login(qr_uuid)
+        if not row:
+            raise HTTPException(status_code=404, detail=f"Qr code is not found in memory")
+        if row[0]:
+        # Установка токена в куки
+            response.set_cookie(
+                key="access_token",
+                value=row[0],
+                httponly=False,
+                max_age=60*60*24*90,
+                samesite="Lax",
+                secure=False,
+                path='/'
+            )
+            print('yeeeeh')
+            await user_service.clear_qr_login(qr_uuid)
+            return {"status": "approved"}
+        print(row[0])
+        return {"status": "pending"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {e}")

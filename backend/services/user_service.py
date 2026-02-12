@@ -17,6 +17,7 @@ from JWTs import create_jwt_token, DecodeJWT
 
 class UserService:
 
+    user_repository = UserRepository()
 
     async def validate_user(self, email: str, password: str) -> bool:
         """Validate user credentials."""
@@ -121,3 +122,15 @@ class UserService:
         await UserRepository.update_password(email=email, new_password=new_password)
         logger.info(f"Password changed successfully for user {email}.")
         return {"message": "Password changed successfully."}
+    
+    async def create_qr_login(self):
+        return await self.user_repository.create_qr_login()
+    
+    async def approve_qr_login(self, qr_hashed: str, jwt: str):
+        return await self.user_repository.approve_qr_login(qr_hash=qr_hashed, jwt=jwt)
+    
+    async def check_qr_login(self, qr_hashed: str):
+        return await self.user_repository.check_qr_login(qr_hash=qr_hashed)
+    
+    async def clear_qr_login(self, qr_hashed: str):
+        return await self.user_repository.clear_qr_login(qr_hash=qr_hashed)
