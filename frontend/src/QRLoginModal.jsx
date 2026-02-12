@@ -90,7 +90,7 @@ export default function QRLoginModal({ isOpen, onClose }) {
         const newUid = resp.data.uid;
         setUid(newUid);
         uidRef.current = newUid;
-        const url = `${backendUrl}/auth/auth/qr_login/approve?qr_uuid=${encodeURIComponent(newUid)}`;
+        const url = `https://smotrelka.space/qr_login?qr_uuid=${encodeURIComponent(newUid)}`;
         setQrUrl(url);
         // стартуем поллинг
         startPoll(newUid);

@@ -12,6 +12,7 @@ import LoginRoute from './LoginRoute';
 import PrivacyPolicy from './PrivacyPage.jsx';
 import CookieConsent from "./CookieConsent";
 import ProfilePage from './ProfilePage.jsx';
+import QRLoginPage from './QRLoginPage.jsx';
 
 
 
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
+        <Route path="/qr_login" element={<QRLoginPage />} />
         <Route path="/auth" element={<LoginRoute><AuthPage /></LoginRoute>} />
         <Route path="/home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
         <Route path="/" element={<AboutPage />} />
