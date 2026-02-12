@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import QRLoginModal from "./QRLoginModal";
 import Cookies from "js-cookie";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import { Eye, EyeOff } from "lucide-react";
@@ -11,6 +12,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isQrOpen, setIsQrOpen] = useState(false);
   
 
   const onSubmit = async (data) => {
@@ -98,6 +100,19 @@ const LoginForm = () => {
                      >
             Войти
           </button>
+          <button
+            type="button"
+            onClick={() => setIsQrOpen(true)}
+            className="mt-2 inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm"
+          >
+            Войти по QR
+          </button>
+
+          {/* Под конец компонента: модалка */}
+          <QRLoginModal
+            isOpen={isQrOpen}
+            onClose={() => setIsQrOpen(false)}
+          />
           <a href="/register">
           {/* <button type="button" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full">
             Регистрация

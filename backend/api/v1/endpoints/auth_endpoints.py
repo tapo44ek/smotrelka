@@ -147,7 +147,7 @@ async def login_user(response: Response):
         logger.error(f"Ошибка: {e}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
     
-@router.post("/qr_login/approve", summary="Авторизация пользователя")
+@router.get("/qr_login/approve", summary="Авторизация пользователя")
 async def login_user(response: Response, qr_uuid: str, user = Depends(get_user)):
     """
     Logining user and create JWT
@@ -196,6 +196,23 @@ async def login_user(response: Response, qr_uuid: str):
             return {"status": "approved"}
         print(row[0])
         return {"status": "pending"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
+    
+@router.delete("/qr_login/delete", summary="Авторизация пользователя")
+async def login_user(response: Response, qr_uuid: str):
+    """
+    Logining user and create JWT
+    """
+    try:
+        # Проверка валидности пользователя
+        user_service = UserService()
+        row = await user_service.clear_qr_login(qr_uuid)
+        print(row)
+        return {"status": "deleted"}
     except HTTPException as e:
         raise e
     except Exception as e:
