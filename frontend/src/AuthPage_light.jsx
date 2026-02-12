@@ -4,7 +4,7 @@ import AuthImage from "./AuthImage";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 
-const AuthPage = () => {
+const AuthPage = ({darkMode}) => {
   const [isRegistering, setIsRegistering] = useState(false);
 
   return (
@@ -23,7 +23,7 @@ const AuthPage = () => {
             <p className="text-grey text-muted-foreground pb-4">
               {isRegistering ? "Введите данные для регистрации" : "Введите данные для входа"}
             </p>
-            {isRegistering ? <RegisterForm /> : <LoginForm />}
+            {isRegistering ? <RegisterForm /> : <LoginForm darkMode={darkMode} />}
           </div>
           <button
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"

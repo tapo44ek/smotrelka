@@ -1,7 +1,7 @@
 import AuthImage from "./AuthImage";
 import LoginForm from "./LoginForm";
 
-const LoginPage = () => {
+const LoginPage = ({darkMode}) => {
     return (
       <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
               <div class="block1 z-10 flex min-h-screen items-center justify-center py-12 shadow-2xl">
@@ -9,7 +9,7 @@ const LoginPage = () => {
                       <div class="grid gap-2 text-center">
                           <h1 class="text-3xl font-bold">Добро пожаловать</h1>
                           <p class="text-grey text-muted-foreground pb-4">Введите данные для входа</p>
-                          <LoginForm />
+                          <LoginForm darkMode={darkMode}/>
                       </div>
                   </div>
               </div>

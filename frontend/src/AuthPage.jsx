@@ -58,7 +58,7 @@ const AuthPage = () => {
         {isRegistering ? (
           <RegisterForm key="register" />
         ) : (
-          <LoginForm key="login" />
+          <LoginForm key="login" darkMode={darkMode} />
         )}
 
         {/* 🔹 Кнопка переключения */}
@@ -88,7 +88,7 @@ const AuthPage = () => {
           <p className="text-grey text-muted-foreground pb-4">
             {isRegistering ? "Введите данные для регистрации" : "Введите данные для входа"}
           </p>
-          {isRegistering ? <RegisterForm /> : <LoginForm />}
+          {isRegistering ? <RegisterForm /> : <LoginForm  darkMode={darkMode}/>}
         </div>
         {/* <button
                 onClick={() => setIsResetOpen(true)}

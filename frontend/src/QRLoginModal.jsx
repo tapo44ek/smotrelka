@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-export default function QRLoginModal({ isOpen, onClose }) {
+export default function QRLoginModal({ isOpen, onClose, darkMode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [uid, setUid] = useState(null);
@@ -28,7 +28,6 @@ export default function QRLoginModal({ isOpen, onClose }) {
 
   useEffect(() => {
     if (!isOpen) return;
-
     // блокируем скролл
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -162,13 +161,13 @@ export default function QRLoginModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className={`fixed inset-0 z-50 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"} flex items-center justify-center`}>
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={async () => { await cleanup(); onClose(); }} />
 
       <div
         role="dialog"
         aria-modal="true"
-        className="relative z-10 w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-2xl"
+        className={`relative z-10 w-full max-w-md transform overflow-hidden rounded-2xl ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"} p-6 shadow-2xl`}
         onClick={(e) => e.stopPropagation()}
       >
         <header className="mb-4 flex items-start justify-between">
