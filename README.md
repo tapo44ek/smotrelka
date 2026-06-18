@@ -1,4 +1,4 @@
-# [smotrelka.space] (https://smotrelka.space/) Online Cinema
+# [smotrelka.space](https://smotrelka.space/) Online Cinema
 
 
 Smotrelka is a custom online cinema backend designed to power a modern movie platform with user authentication, password management, and QR‑code based login flows, plus a separate frontend for the user interface. It is built on top of FastAPI and a modular architecture that separates APIs, domain models, services, repositories, and utilities.
