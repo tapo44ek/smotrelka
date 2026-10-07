@@ -119,7 +119,7 @@ async function fetchSources(movieData) {
     }
 
     const validSources = playersData.filter((player) =>
-      player?.iframeUrl && player?.success && player?.source
+      (player?.iframeUrl || player?.embed) && player?.success && player?.source
     );
     const priority = ["Alloha", "Collaps", "Vibix"];
     const sortedSources = validSources.sort((a, b) => {

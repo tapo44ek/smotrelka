@@ -1,128 +1,119 @@
+import asyncio
 import logging
-from fastapi import HTTPException
-import requests
+
+import httpx
+
 from core.config import BalancerKeys
+from utils.embed import parse_embed_code
+
+logger = logging.getLogger(__name__)
+
+TIMEOUT = 10
+
+
+def _empty(source: str) -> dict:
+    return {
+        'source': source,
+        'iframeUrl': '',
+        'embed': None,
+        'translations': [],
+        'success': False,
+        'updatedAt': []
+    }
+
 
 class Players:
 
-    async def get_vibix_player(self, params :dict) -> dict | None:
-        base_link = 'https://vibix.org/api/v1/publisher/videos/'
+    def __init__(self, transport: httpx.AsyncBaseTransport | None = None):
+        # transport подменяется в тестах
+        self.transport = transport
+
+    async def get_vibix_player(self, client: httpx.AsyncClient, kinopoisk: str) -> dict:
+        result = _empty('Vibix')
         headers = {
             'accept': 'application/json',
             'Authorization': f'Bearer {BalancerKeys.VIBIX_KEY}',
-            'X-CSRF-TOKEN': ''
         }
 
-        result =    {
-                        'source': 'Vibix',
-                        'iframeUrl': '',
-                        'translations': [],
-                        'success': False,
-                        'updatedAt': []
-                    }
-
-        if params['kinopoisk']:
-            search_link = base_link + 'kp/' + params['kinopoisk']
-        
         try:
-            if search_link:
-                response = requests.get(search_link, headers=headers)
-                if response.ok:
-                    data = response.json()
-                    result = {
-                        'source': 'Vibix',
-                        'iframeUrl': data['iframe_url'],
-                        'translations': data['voiceovers'],
-                        'success': True,
-                        'updatedAt': data['updated_at']
-                    }
-                    return result
-                else: 
-                    return result
-            else: return result
-        except Exception as e: 
-            print(f'{str(e)}')
-            return result
-        
+            response = await client.get(
+                f'https://vibix.org/api/v1/publisher/videos/kp/{kinopoisk}',
+                headers=headers
+            )
+            if not response.is_success:
+                return result
 
-    async def get_alloha_player(self, params :dict) -> dict | None:
-
-        result = {
-                'source': 'Alloha',
-                'iframeUrl': '',
-                'translations': [],
-                'success': False,
-                'updatedAt': []
+            data = response.json()
+            embed = parse_embed_code(data.get('embed_code'))
+            iframe_url = data.get('iframe_url') or ''
+            return {
+                'source': 'Vibix',
+                'iframeUrl': '' if embed else iframe_url,
+                'embed': embed,
+                'translations': data.get('voiceovers') or [],
+                'success': bool(embed or iframe_url),
+                'updatedAt': data.get('updated_at')
             }
-
-        if not params['kinopoisk']:
-            return  result
-
-
-        base_link = f'https://api.alloha.tv/?token={BalancerKeys.ALLOHA_KEY}&kp={params["kinopoisk"]}'
-
-        try:
-            response = requests.get(base_link, verify=False)
-            print(response)
-            if response.ok:
-                data = response.json()
-                result = {
-                    'source': 'Alloha',
-                    'iframeUrl': data['data']['iframe'],
-                    'translations': data['data']['translation_iframe'],
-                    'success': True,
-                    'updatedAt': []
-                }
-
-            return result
-        except Exception as e: 
-            print(f'{str(e)}')
-            return result
-        
-
-    async def get_collaps_player(self, params :dict) -> dict | None:
-
-        result = {
-                'source': 'Collaps',
-                'iframeUrl': '',
-                'translations': [],
-                'success': False,
-                'updatedAt': []
-            }
-
-        if not params['kinopoisk']:
-            return  result
-
-        base_link = f'https://api.bhcesh.me/franchise/details?token={BalancerKeys.COLLAPS_KEY}&kinopoisk_id={params["kinopoisk"]}'
-
-        try:
-            response = requests.get(base_link)
-            print(response)
-            if response.ok:
-                data = response.json()
-                print("data.  ", data)
-                result = {
-                    'source': 'Collaps',
-                    'iframeUrl': data['iframe_url'],
-                    'translations': [],
-                    'success': True,
-                    'updatedAt': []
-                }
-                print(result)
-
-            return result
         except Exception as e:
-            print(f'{str(e)}')
-            return(result)
+            logger.warning(f'Vibix error for kp={kinopoisk}: {e!r}')
+            return result
 
+    async def get_alloha_player(self, client: httpx.AsyncClient, kinopoisk: str) -> dict:
+        result = _empty('Alloha')
 
+        try:
+            response = await client.get(
+                'https://api.alloha.tv/',
+                params={'token': BalancerKeys.ALLOHA_KEY, 'kp': kinopoisk}
+            )
+            if not response.is_success:
+                return result
 
+            data = response.json()['data']
+            return {
+                **result,
+                'iframeUrl': data['iframe'],
+                'translations': data['translation_iframe'],
+                'success': True
+            }
+        except Exception as e:
+            logger.warning(f'Alloha error for kp={kinopoisk}: {e!r}')
+            return result
 
-    async def get_players(self, params :dict) -> dict:
+    async def get_collaps_player(self, client: httpx.AsyncClient, kinopoisk: str) -> dict:
+        result = _empty('Collaps')
+
+        try:
+            response = await client.get(
+                'https://api.bhcesh.me/franchise/details',
+                params={'token': BalancerKeys.COLLAPS_KEY, 'kinopoisk_id': kinopoisk}
+            )
+            if not response.is_success:
+                return result
+
+            data = response.json()
+            return {
+                **result,
+                'iframeUrl': data['iframe_url'],
+                'success': True
+            }
+        except Exception as e:
+            logger.warning(f'Collaps error for kp={kinopoisk}: {e!r}')
+            return result
+
+    async def get_players(self, params: dict) -> list[dict]:
         """search videos from balancers"""
-        print(params)
-        vibix = await self.get_vibix_player(params)
-        alloha = await self.get_alloha_player(params)
-        collaps = await self.get_collaps_player(params)
+        kinopoisk = params.get('kinopoisk')
+        if not kinopoisk:
+            return [_empty('Vibix'), _empty('Alloha'), _empty('Collaps')]
+
+        # у Alloha TLS не проверяем намеренно
+        async with httpx.AsyncClient(timeout=TIMEOUT, transport=self.transport) as client, \
+                httpx.AsyncClient(timeout=TIMEOUT, transport=self.transport, verify=False) as alloha_client:
+            vibix, alloha, collaps = await asyncio.gather(
+                self.get_vibix_player(client, kinopoisk),
+                self.get_alloha_player(alloha_client, kinopoisk),
+                self.get_collaps_player(client, kinopoisk),
+            )
 
         return [vibix, alloha, collaps]

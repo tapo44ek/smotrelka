@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { init } from "./js/player";
 import { Clock } from "lucide-react";
 import SearchBar from "./SearchBar";
+import VibixEmbed from "./VibixEmbed";
 
 const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) => {
     const [playerReady, setPlayerReady] = useState(false);
-    const [iframeUrl, setIframeUrl] = useState("");
+    const [activeSource, setActiveSource] = useState("");
     const [sources, setSources] = useState([]);
     const [isEmpty, setIsEmpty] = useState(false); // Флаг для проверки пустого списка
 
@@ -21,7 +22,7 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
             .then((availableSources) => {
                 if (availableSources.length > 0) {
                     setSources(availableSources);
-                    setIframeUrl(availableSources[0].iframeUrl);
+                    setActiveSource(availableSources[0].source);
                     setPlayerReady(true);
                 } else {
                     console.warn("Нет доступных источников.");
@@ -33,6 +34,8 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
                 setPlayerReady(false);
             });
     }, [movieData]);
+
+    const current = sources.find((source) => source.source === activeSource);
 
     return (
         <div 
@@ -57,8 +60,8 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
 
             {/* 📌 Окно плеера */}
             <div 
-                id="vibix_union" 
-                className={`w-full h-auto max-w-screen-sm md:max-w-screen-md lg:max-w-2xl min-w-[300px] drop-shadow-xl items-center transition-all duration-600
+                id="player"
+                className={`w-full h-auto max-w-screen-sm md:max-w-screen-md lg:max-w-2xl min-w-[300px] items-center transition-colors duration-500
                  rounded-lg shadow-lg p-2 ${darkMode ? "bg-zinc-900 text-white" : "bg-zinc-300 text-black"}`}
             >
                 {/* 🔹 Заголовок */}
@@ -75,9 +78,15 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
                 >
                     {isEmpty ? (
                         <p className="text-lg font-semibold text-gray-500">Тут пока пусто</p>
-                    ) : playerReady && iframeUrl ? (
+                    ) : playerReady && current?.embed ? (
+                        <VibixEmbed
+                            key={`${current.embed.type}-${current.embed.id}-${darkMode}`}
+                            embed={current.embed}
+                            darkMode={darkMode}
+                        />
+                    ) : playerReady && current?.iframeUrl ? (
                         <iframe
-                            src={iframeUrl}
+                            src={current.iframeUrl}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                             allowFullScreen
                             className="w-full h-full rounded-lg"
@@ -90,15 +99,15 @@ const PlayerComponent = ({ movieData, setHistoryOpen, setMovieData, darkMode }) 
                 {/* 🔹 Источники */}
                 {playerReady && sources.length > 0 && (
                     <div id="sources" className="flex flex-wrap justify-center items-center gap-1 p-2">
-                        {sources.map((source, index) => (
+                        {sources.map((source) => (
                             <button
-                                key={index}
+                                key={source.source}
                                 className={`px-2 py-1 text-xs md:text-sm rounded-md transition ${
-                                    iframeUrl === source.iframeUrl
+                                    activeSource === source.source
                                         ? "bg-black text-white"
                                         : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                                 }`}
-                                onClick={() => setIframeUrl(source.iframeUrl)}
+                                onClick={() => setActiveSource(source.source)}
                             >
                                 {source.source}
                             </button>
